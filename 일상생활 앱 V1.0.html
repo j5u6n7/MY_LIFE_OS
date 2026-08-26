@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>MY LIFE OS</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    /* 밝은 테마 컬러 팔레트 */
+    --bg:#f4f7fc;
+    --card:#ffffff;
+    --card2:#f8fafc;
+    --line:#e2e8f0;
+    --text:#1e293b;
+    --sub:#64748b;
+    --blue:#2563eb;
+    --green:#16a34a;
+    --yellow:#d97706;
+    --red:#dc2626;
+    --purple:#7c3aed;
+    --cyan:#0891b2;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at top right,#e0f2fe 0,#f4f7fc 45%),
+        var(--bg);
+    color:var(--text);
+    font-family:
+        -apple-system,BlinkMacSystemFont,
+        "Noto Sans KR",sans-serif;
+}
+
+button,input,textarea,select{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.app{
+    max-width:720px;
+    margin:auto;
+    min-height:100vh;
+    padding-bottom:90px;
+}
+
+/* HEADER */
+
+.header{
+    padding:24px 18px 14px;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+.logo span{
+    color:var(--blue);
+}
+
+.subtitle{
+    color:var(--sub);
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+    margin:0 15px 15px;
+    padding:20px;
+    border-radius:24px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+}
+
+.greeting{
+    color:#bfdbfe;
+    font-size:13px;
+}
+
+.today{
+    font-size:25px;
+    font-weight:900;
+    margin-top:4px;
+}
+
+.ai-mini{
+    margin-top:16px;
+    padding:15px;
+    border-radius:17px;
+    background:rgba(255, 255, 255, 0.15);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ai-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.ai-title b{
+    font-size:15px;
+}
+
+.ai-score{
+    font-size:24px;
+    font-weight:900;
+    color:#ffffff;
+}
+
+.ai-summary{
+    margin-top:8px;
+    color:#eff6ff;
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* MENU */
+
+.section-title{
+    padding:0 17px;
+    margin:20px 0 10px;
+    font-size:16px;
+    font-weight:800;
+    color:#0f172a;
+}
+
+.menu{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    padding:0 15px;
+}
+
+.menu button{
+    min-height:92px;
+    border-radius:18px;
+    background:var(--card);
+    border:1px solid var(--line);
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:7px;
+    transition:.15s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.menu button:active{
+    transform:scale(.96);
+    background:#f1f5f9;
+}
+
+.menu .icon{
+    font-size:27px;
+}
+
+.menu .label{
+    font-size:12px;
+    font-weight:600;
+}
+
+/* CARDS */
+
+.card{
+    margin:0 15px 13px;
+    padding:17px;
+    border-radius:20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.stat-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.stat{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:15px;
+    border-radius:16px;
+}
+
+.stat .name{
+    color:var(--sub);
+    font-size:12px;
+}
+
+.stat .value{
+    font-size:22px;
+    font-weight:900;
+    margin-top:5px;
+    color:#0f172a;
+}
+
+/* PROGRESS */
+
+.progress{
+    height:9px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:9px;
+}
+
+.progress div{
+    height:100%;
+    background:linear-gradient(90deg,#2563eb,#16a34a);
+    border-radius:20px;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(15, 23, 42, 0.4);
+    backdrop-filter:blur(6px);
+    padding:15px;
+    overflow:auto;
+}
+
+.modal.show{
+    display:block;
+}
+
+.modal-box{
+    max-width:700px;
+    margin:30px auto;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:24px;
+    padding:20px;
+    box-shadow:0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.modal-header h2{
+    margin:0;
+    font-size:20px;
+    color:#0f172a;
+}
+
+.close{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#f1f5f9;
+    color:#64748b;
+    font-size:20px;
+}
+
+/* INPUT */
+
+input,textarea,select{
+    width:100%;
+    border:1px solid #cbd5e1;
+    background:#ffffff;
+    color:#0f172a;
+    padding:13px;
+    border-radius:13px;
+    outline:none;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:var(--blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.form-group{
+    margin-bottom:12px;
+}
+
+.form-group label{
+    display:block;
+    color:var(--sub);
+    font-size:12px;
+    margin-bottom:6px;
+    font-weight:600;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    color:white;
+    font-weight:800;
+    margin-top:7px;
+}
+
+.btn-blue{
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+}
+
+.btn-green{
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+.btn-red{
+    background:#dc2626;
+}
+
+.btn-gray{
+    background:#64748b;
+}
+
+/* AI */
+
+.ai-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:12px;
+}
+
+.ai-big-score{
+    text-align:center;
+    padding:10px;
+}
+
+.ai-big-score .number{
+    font-size:58px;
+    font-weight:900;
+    color:var(--blue);
+}
+
+.ai-big-score .text{
+    color:var(--sub);
+}
+
+.analysis-item{
+    padding:13px;
+    margin-top:9px;
+    border-radius:14px;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    line-height:1.6;
+    font-size:13px;
+    color:var(--text);
+}
+
+.analysis-item strong{
+    color:#0f172a;
+}
+
+.good{
+    color:#16a34a;
+}
+
+.warn{
+    color:#d97706;
+}
+
+.bad{
+    color:#dc2626;
+}
+
+/* LIST */
+
+.list-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:13px 0;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.list-item:last-child{
+    border-bottom:0;
+}
+
+.list-main{
+    flex:1;
+}
+
+.list-title{
+    font-weight:700;
+    color:#0f172a;
+}
+
+.list-sub{
+    color:var(--sub);
+    font-size:11px;
+    margin-top:3px;
+}
+
+.delete{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#fef2f2;
+    color:#dc2626;
+}
+
+/* BOTTOM */
+
+.bottom{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:68px;
+    z-index:50;
+    background:rgba(255, 255, 255, 0.9);
+    backdrop-filter:blur(15px);
+    border-top:1px solid #e2e8f0;
+    display:flex;
+    justify-content:center;
+}
+
+.bottom-inner{
+    width:100%;
+    max-width:720px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+}
+
+.bottom button{
+    background:none;
+    color:#64748b;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+}
+
+.bottom button.active{
+    color:var(--blue);
+}
+
+.bottom span:first-child{
+    font-size:20px;
+}
+
+.bottom span:last-child{
+    font-size:10px;
+    font-weight:600;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:85px;
+    transform:translateX(-50%) translateY(20px);
+    background:#0f172a;
+    color:white;
+    padding:12px 18px;
+    border-radius:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:300;
+    white-space:nowrap;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    color:#94a3b8;
+    padding:25px 10px;
+    font-size:13px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:390px){
+    .menu{
+        gap:7px;
+    }
+
+    .menu button{
+        min-height:82px;
+    }
+
+    .menu .icon{
+        font-size:24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div class="logo">MY LIFE <span>OS</span></div>
+        <div class="subtitle">
+            나만의 생활 관리 · 분석 플랫폼
+        </div>
+    </header>
+
+    <section class="dashboard">
+
+        <div class="greeting">오늘의 생활상태</div>
+
+        <div class="today" id="todayText">
+            오늘도 좋은 하루입니다.
+        </div>
+
+        <div class="ai-mini">
+            <div class="ai-title">
+                <b>🤖 AI 생활지수</b>
+                <span class="ai-score" id="miniScore">--</span>
+            </div>
+
+            <div class="ai-summary" id="miniSummary">
+                데이터를 입력하면 AI가 생활 패턴을 분석합니다.
+            </div>
+        </div>
+
+    </section>
+
+    <div class="section-title">빠른 메뉴</div>
+
+    <div class="menu">
+
+        <button onclick="openModal('expense')">
+            <div class="icon">💰</div>
+            <div class="label">가계부</div>
+        </button>
+
+        <button onclick="openModal('todo')">
+            <div class="icon">✅</div>
+            <div class="label">할 일</div>
+        </button>
+
+        <button onclick="openModal('schedule')">
+            <div class="icon">📅</div>
+            <div class="label">일정</div>
+        </button>
+
+        <button onclick="openModal('goal')">
+            <div class="icon">🎯</div>
+            <div class="label">목표</div>
+        </button>
+
+        <button onclick="openModal('shopping')">
+            <div class="icon">🛒</div>
+            <div class="label">장보기</div>
+        </button>
+
+        <button onclick="openModal('memo')">
+            <div class="icon">📝</div>
+            <div class="label">메모</div>
+        </button>
+
+        <button onclick="openModal('items')">
+            <div class="icon">📦</div>
+            <div class="label">물건관리</div>
+        </button>
+
+        <button onclick="openModal('calculator')">
+            <div class="icon">🧮</div>
+            <div class="label">계산기</div>
+        </button>
+
+        <button onclick="openAI()">
+            <div class="icon">🤖</div>
+            <div class="label">AI 분석</div>
+        </button>
+
+    </div>
+
+    <div class="section-title">오늘의 현황</div>
+
+    <div class="card">
+
+        <div class="stat-grid">
+
+            <div class="stat">
+                <div class="name">이번 달 지출</div>
+                <div class="value" id="expenseTotal">0원</div>
+            </div>
+
+            <div class="stat">
+                <div class="name">완료한 할 일</div>
+                <div class="value" id="todoDone">0</div>
+            </div>
+
+            <div class="stat">
+                <div class="name">진행 목표</div>
+                <div class="value" id="goalProgress">0%</div>
+            </div>
+
+            <div class="stat">
+                <div class="name">메모</div>
+                <div class="value" id="memoCount">0</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section-title">오늘의 할 일</div>
+
+    <div class="card" id="todayTodo">
+        <div class="empty">
+            등록된 할 일이 없습니다.
+        </div>
+    </div>
+
+</div>
+
+
+<!-- BOTTOM -->
+
+<div class="bottom">
+
+    <div class="bottom-inner">
+
+        <button class="active" onclick="scrollTopPage()">
+            <span>🏠</span>
+            <span>홈</span>
+        </button>
+
+        <button onclick="openAI()">
+            <span>🤖</span>
+            <span>AI</span>
+        </button>
+
+        <button onclick="openModal('memo')">
+            <span>📝</span>
+            <span>메모</span>
+        </button>
+
+        <button onclick="openModal('settings')">
+            <span>⚙️</span>
+            <span>설정</span>
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="modal" onclick="handleModalBgClick(event)">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">메뉴</h2>
+
+            <button class="close" onclick="closeModal()">×</button>
+
+        </div>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   MY LIFE OS
+   OFFLINE DATA ENGINE
+========================================================= */
+
+const DB_KEY = "MY_LIFE_OS_DATABASE_V1";
+
+let db = loadDB();
+
+function defaultDB(){
+
+    return {
+
+        expenses:[],
+        todos:[],
+        schedules:[],
+        goals:[],
+        shopping:[],
+        memos:[],
+        items:[]
+
+    };
+
+}
+
+function loadDB(){
+
+    try{
+
+        const data = localStorage.getItem(DB_KEY);
+
+        if(data){
+
+            return {
+                ...defaultDB(),
+                ...JSON.parse(data)
+            };
+
+        }
+
+    }catch(e){}
+
+    return defaultDB();
+
+}
+
+function saveDB(){
+
+    localStorage.setItem(
+        DB_KEY,
+        JSON.stringify(db)
+    );
+
+    updateDashboard();
+
+}
+
+
+/* =========================================================
+   UTIL
+========================================================= */
+
+function money(n){
+
+    return Number(n || 0)
+        .toLocaleString("ko-KR") + "원";
+
+}
+
+function today(){
+
+    const d = new Date();
+
+    return d.toISOString().slice(0,10);
+
+}
+
+function month(){
+
+    return today().slice(0,7);
+
+}
+
+function esc(str){
+
+    return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+function toast(text){
+
+    const t=document.getElementById("toast");
+
+    t.textContent=text;
+
+    t.classList.add("show");
+
+    setTimeout(()=>{
+        t.classList.remove("show");
+    },1800);
+
+}
+
+
+/* =========================================================
+   MODAL WITH BACK-BUTTON (POPSTATE) HANDLING
+========================================================= */
+
+function openModal(type){
+
+    const modal=document.getElementById("modal");
+
+    const title=document.getElementById("modalTitle");
+
+    const content=document.getElementById("modalContent");
+
+    // 모달이 열려있지 않을 때만 히스토리 상태 추가
+    if(!modal.classList.contains("show")){
+        history.pushState({ modalOpen: true }, "");
+    }
+
+    modal.classList.add("show");
+
+    if(type==="expense"){
+
+        title.textContent="💰 가계부";
+
+        content.innerHTML=expenseHTML();
+
+    }
+
+    else if(type==="todo"){
+
+        title.textContent="✅ 할 일";
+
+        content.innerHTML=todoHTML();
+
+    }
+
+    else if(type==="schedule"){
+
+        title.textContent="📅 일정";
+
+        content.innerHTML=scheduleHTML();
+
+    }
+
+    else if(type==="goal"){
+
+        title.textContent="🎯 목표";
+
+        content.innerHTML=goalHTML();
+
+    }
+
+    else if(type==="shopping"){
+
+        title.textContent="🛒 장보기";
+
+        content.innerHTML=shoppingHTML();
+
+    }
+
+    else if(type==="memo"){
+
+        title.textContent="📝 메모";
+
+        content.innerHTML=memoHTML();
+
+    }
+
+    else if(type==="items"){
+
+        title.textContent="📦 물건 관리";
+
+        content.innerHTML=itemHTML();
+
+    }
+
+    else if(type==="calculator"){
+
+        title.textContent="🧮 계산기";
+
+        content.innerHTML=calculatorHTML();
+
+    }
+
+    else if(type==="settings"){
+
+        title.textContent="⚙️ 설정 / 데이터";
+
+        content.innerHTML=settingsHTML();
+
+    }
+
+}
+
+function closeModal(fromPopstate = false){
+
+    const modal = document.getElementById("modal");
+
+    if(modal.classList.contains("show")){
+        modal.classList.remove("show");
+
+        // UI 버튼(X버튼 등)으로 닫았을 경우 생성해둔 히스토리 정리
+        if(!fromPopstate && history.state && history.state.modalOpen){
+            history.back();
+        }
+    }
+
+}
+
+/* 모달 바깥 배경 클릭 시 닫기 */
+function handleModalBgClick(e){
+    if(e.target.id === "modal"){
+        closeModal();
+    }
+}
+
+/* 뒤로가기 버튼 감지 이벤트 */
+window.addEventListener("popstate", function(event){
+
+    const modal = document.getElementById("modal");
+
+    if(modal.classList.contains("show")){
+        closeModal(true);
+    }
+
+});
+
+
+/* =========================================================
+   EXPENSE
+========================================================= */
+
+function expenseHTML(){
+
+    const list=db.expenses.slice().reverse();
+
+    return `
+
+        <div class="form-group">
+            <label>금액</label>
+            <input id="expAmount" type="number"
+                   placeholder="예: 15000">
+        </div>
+
+        <div class="form-group">
+            <label>분류</label>
+            <select id="expCategory">
+                <option>식비</option>
+                <option>교통</option>
+                <option>쇼핑</option>
+                <option>통신</option>
+                <option>주거</option>
+                <option>의료</option>
+                <option>여가</option>
+                <option>기타</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>내용</label>
+            <input id="expMemo"
+                   placeholder="예: 점심식사">
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="addExpense()">
+            지출 기록
+        </button>
+
+        <div class="section-title"
+             style="padding:0;margin-top:25px">
+             최근 지출
+        </div>
+
+        ${
+            list.length
+            ? list.slice(0,20).map((x,i)=>`
+                <div class="list-item">
+
+                    <div class="list-main">
+                        <div class="list-title">
+                            ${esc(x.memo || x.category)}
+                        </div>
+
+                        <div class="list-sub">
+                            ${x.date} · ${x.category}
+                        </div>
+                    </div>
+
+                    <b>${money(x.amount)}</b>
+
+                    <button class="delete"
+                            onclick="deleteExpense(${db.expenses.indexOf(x)})">
+                        ×
+                    </button>
+
+                </div>
+            `).join("")
+            : `<div class="empty">아직 지출 기록이 없습니다.</div>`
+        }
+
+    `;
+
+}
+
+function addExpense(){
+
+    const amount=Number(
+        document.getElementById("expAmount").value
+    );
+
+    if(!amount){
+
+        toast("금액을 입력하세요");
+
+        return;
+
+    }
+
+    db.expenses.push({
+
+        amount,
+        category:document.getElementById("expCategory").value,
+        memo:document.getElementById("expMemo").value,
+        date:today()
+
+    });
+
+    saveDB();
+
+    toast("지출이 기록되었습니다");
+
+    openModal("expense");
+
+}
+
+function deleteExpense(i){
+
+    if(confirm("삭제할까요?")){
+
+        db.expenses.splice(i,1);
+
+        saveDB();
+
+        openModal("expense");
+
+    }
+
+}
+
+
+/* =========================================================
+   TODO
+========================================================= */
+
+function todoHTML(){
+
+    return `
+
+        <div class="form-group">
+
+            <label>할 일</label>
+
+            <input id="todoInput"
+                   placeholder="예: 운동하기">
+
+        </div>
+
+        <button class="btn btn-green"
+                onclick="addTodo()">
+            추가
+        </button>
+
+        <div style="margin-top:15px">
+
+        ${
+            db.todos.length
+            ? db.todos.slice().reverse().map((x,i)=>`
+
+                <div class="list-item">
+
+                    <input type="checkbox"
+                           style="width:22px"
+                           ${x.done?"checked":""}
+                           onchange="toggleTodo(${db.todos.indexOf(x)})">
+
+                    <div class="list-main"
+                         style="${x.done?'text-decoration:line-through;color:#94a3b8':''}">
+                        ${esc(x.text)}
+                    </div>
+
+                    <button class="delete"
+                            onclick="deleteTodo(${db.todos.indexOf(x)})">
+                        ×
+                    </button>
+
+                </div>
+
+            `).join("")
+            : `<div class="empty">할 일이 없습니다.</div>`
+        }
+
+        </div>
+    `;
+
+}
+
+function addTodo(){
+
+    const text=document.getElementById("todoInput").value.trim();
+
+    if(!text)return;
+
+    db.todos.push({
+
+        text,
+        done:false,
+        date:today()
+
+    });
+
+    saveDB();
+
+    openModal("todo");
+
+}
+
+function toggleTodo(i){
+
+    db.todos[i].done=!db.todos[i].done;
+
+    saveDB();
+
+    openModal("todo");
+
+}
+
+function deleteTodo(i){
+
+    db.todos.splice(i,1);
+
+    saveDB();
+
+    openModal("todo");
+
+}
+
+
+/* =========================================================
+   SCHEDULE
+========================================================= */
+
+function scheduleHTML(){
+
+    const list=db.schedules
+        .slice()
+        .sort((a,b)=>a.date.localeCompare(b.date));
+
+    return `
+
+        <div class="form-group">
+            <label>날짜</label>
+            <input id="schDate" type="date"
+                   value="${today()}">
+        </div>
+
+        <div class="form-group">
+            <label>일정</label>
+            <input id="schText"
+                   placeholder="예: 병원 예약">
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="addSchedule()">
+            일정 추가
+        </button>
+
+        <div style="margin-top:15px">
+
+        ${
+            list.length
+            ? list.map(x=>`
+
+                <div class="list-item">
+
+                    <div class="list-main">
+                        <div class="list-title">
+                            ${esc(x.text)}
+                        </div>
+
+                        <div class="list-sub">
+                            ${x.date}
+                        </div>
+                    </div>
+
+                    <button class="delete"
+                            onclick="deleteSchedule('${x.id}')">
+                        ×
+                    </button>
+
+                </div>
+
+            `).join("")
+            : `<div class="empty">등록된 일정이 없습니다.</div>`
+        }
+
+        </div>
+    `;
+
+}
+
+function addSchedule(){
+
+    const text=document.getElementById("schText").value.trim();
+
+    if(!text)return;
+
+    db.schedules.push({
+
+        id:Date.now().toString(),
+        date:document.getElementById("schDate").value,
+        text
+
+    });
+
+    saveDB();
+
+    openModal("schedule");
+
+}
+
+function deleteSchedule(id){
+
+    db.schedules=db.schedules.filter(x=>x.id!==id);
+
+    saveDB();
+
+    openModal("schedule");
+
+}
+
+
+/* =========================================================
+   GOAL
+========================================================= */
+
+function goalHTML(){
+
+    return `
+
+        <div class="form-group">
+            <label>목표</label>
+            <input id="goalText"
+                   placeholder="예: 100만원 모으기">
+        </div>
+
+        <div class="form-group">
+            <label>현재 진행률 (%)</label>
+            <input id="goalPercent"
+                   type="number"
+                   min="0"
+                   max="100"
+                   value="0">
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="addGoal()">
+            목표 추가
+        </button>
+
+        <div style="margin-top:15px">
+
+        ${
+            db.goals.length
+            ? db.goals.map((x,i)=>`
+
+                <div class="analysis-item">
+
+                    <div class="row">
+                        <strong>${esc(x.text)}</strong>
+
+                        <button class="delete"
+                                onclick="deleteGoal(${i})">
+                            ×
+                        </button>
+                    </div>
+
+                    <div class="progress">
+                        <div style="width:${x.percent}%"></div>
+                    </div>
+
+                    <div class="list-sub">
+                        ${x.percent}% 달성
+                    </div>
+
+                </div>
+
+            `).join("")
+            : `<div class="empty">등록된 목표가 없습니다.</div>`
+        }
+
+        </div>
+    `;
+
+}
+
+function addGoal(){
+
+    const text=document.getElementById("goalText").value.trim();
+
+    if(!text)return;
+
+    let percent=Number(
+        document.getElementById("goalPercent").value
+    );
+
+    percent=Math.max(0,Math.min(100,percent));
+
+    db.goals.push({
+
+        text,
+        percent
+
+    });
+
+    saveDB();
+
+    openModal("goal");
+
+}
+
+function deleteGoal(i){
+
+    db.goals.splice(i,1);
+
+    saveDB();
+
+    openModal("goal");
+
+}
+
+
+/* =========================================================
+   SHOPPING
+========================================================= */
+
+function shoppingHTML(){
+
+    return `
+
+        <div class="form-group">
+            <label>구매할 물건</label>
+            <input id="shopInput"
+                   placeholder="예: 우유">
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="addShopping()">
+            추가
+        </button>
+
+        <div style="margin-top:15px">
+
+        ${
+            db.shopping.length
+            ? db.shopping.map((x,i)=>`
+
+                <div class="list-item">
+
+                    <input type="checkbox"
+                           style="width:22px"
+                           ${x.done?"checked":""}
+                           onchange="toggleShopping(${i})">
+
+                    <div class="list-main"
+                         style="${x.done?'text-decoration:line-through;color:#94a3b8':''}">
+                        ${esc(x.text)}
+                    </div>
+
+                    <button class="delete"
+                            onclick="deleteShopping(${i})">
+                        ×
+                    </button>
+
+                </div>
+
+            `).join("")
+            : `<div class="empty">장보기 목록이 비어 있습니다.</div>`
+        }
+
+        </div>
+    `;
+
+}
+
+function addShopping(){
+
+    const text=document.getElementById("shopInput").value.trim();
+
+    if(!text)return;
+
+    db.shopping.push({
+
+        text,
+        done:false
+
+    });
+
+    saveDB();
+
+    openModal("shopping");
+
+}
+
+function toggleShopping(i){
+
+    db.shopping[i].done=!db.shopping[i].done;
+
+    saveDB();
+
+    openModal("shopping");
+
+}
+
+function deleteShopping(i){
+
+    db.shopping.splice(i,1);
+
+    saveDB();
+
+    openModal("shopping");
+
+}
+
+
+/* =========================================================
+   MEMO
+========================================================= */
+
+function memoHTML(){
+
+    return `
+
+        <div class="form-group">
+
+            <label>메모</label>
+
+            <textarea id="memoInput"
+                      placeholder="자유롭게 기록하세요"></textarea>
+
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="addMemo()">
+            메모 저장
+        </button>
+
+        <div style="margin-top:15px">
+
+        ${
+            db.memos.slice().reverse().map((x,i)=>`
+
+                <div class="analysis-item">
+
+                    <div class="row">
+
+                        <span class="list-sub">${x.date}</span>
+
+                        <button class="delete"
+                                onclick="deleteMemo(${db.memos.length-1-i})">
+                            ×
+                        </button>
+
+                    </div>
+
+                    <div style="margin-top:7px">
+                        ${esc(x.text).replaceAll("\n","<br>")}
+                    </div>
+
+                </div>
+
+            `).join("")
+        }
+
+        </div>
+
+    `;
+
+}
+
+function addMemo(){
+
+    const text=document.getElementById("memoInput").value.trim();
+
+    if(!text)return;
+
+    db.memos.push({
+
+        text,
+        date:today()
+
+    });
+
+    saveDB();
+
+    openModal("memo");
+
+}
+
+function deleteMemo(i){
+
+    db.memos.splice(i,1);
+
+    saveDB();
+
+    openModal("memo");
+
+}
+
+
+/* =========================================================
+   ITEMS
+========================================================= */
+
+function itemHTML(){
+
+    return `
+
+        <div class="form-group">
+            <label>물건 이름</label>
+            <input id="itemName"
+                   placeholder="예: 충전기">
+        </div>
+
+        <div class="form-group">
+            <label>보관 위치</label>
+            <input id="itemLocation"
+                   placeholder="예: 안방 서랍">
+        </div>
+
+        <div class="form-group">
+            <label>메모</label>
+            <input id="itemMemo"
+                   placeholder="색상, 모델명 등">
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="addItem()">
+            물건 저장
+        </button>
+
+        <div style="margin-top:15px">
+
+        ${
+            db.items.length
+            ? db.items.map((x,i)=>`
+
+                <div class="analysis-item">
+
+                    <div class="row">
+
+                        <strong>📦 ${esc(x.name)}</strong>
+
+                        <button class="delete"
+                                onclick="deleteItem(${i})">
+                            ×
+                        </button>
+
+                    </div>
+
+                    <div class="list-sub">
+                        📍 ${esc(x.location)}
+                    </div>
+
+                    <div class="list-sub">
+                        ${esc(x.memo)}
+                    </div>
+
+                </div>
+
+            `).join("")
+            : `<div class="empty">등록된 물건이 없습니다.</div>`
+        }
+
+        </div>
+
+    `;
+
+}
+
+function addItem(){
+
+    const name=document.getElementById("itemName").value.trim();
+
+    if(!name)return;
+
+    db.items.push({
+
+        name,
+        location:document.getElementById("itemLocation").value,
+        memo:document.getElementById("itemMemo").value
+
+    });
+
+    saveDB();
+
+    openModal("items");
+
+}
+
+function deleteItem(i){
+
+    db.items.splice(i,1);
+
+    saveDB();
+
+    openModal("items");
+
+}
+
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+function calculatorHTML(){
+
+    return `
+
+        <div class="form-group">
+            <label>계산식</label>
+            <input id="calcInput"
+                   placeholder="예: 15000*12">
+        </div>
+
+        <button class="btn btn-blue"
+                onclick="calculate()">
+            계산
+        </button>
+
+        <div class="analysis-item"
+             id="calcResult">
+            결과가 여기에 표시됩니다.
+        </div>
+
+    `;
+
+}
+
+function calculate(){
+
+    const input=document
+        .getElementById("calcInput")
+        .value;
+
+    const result=document
+        .getElementById("calcResult");
+
+    if(!/^[0-9+\-*/().% ]+$/.test(input)){
+
+        result.textContent="올바른 계산식을 입력하세요.";
+
+        return;
+
+    }
+
+    try{
+
+        const value=Function(
+            '"use strict";return ('+input+')'
+        )();
+
+        result.textContent=
+            Number(value).toLocaleString("ko-KR");
+
+    }catch(e){
+
+        result.textContent="계산할 수 없습니다.";
+
+    }
+
+}
+
+
+/* =========================================================
+   AI ENGINE
+========================================================= */
+
+function AIAnalyze(){
+
+    const currentMonth=month();
+
+    const expenses=db.expenses
+        .filter(x=>x.date.startsWith(currentMonth));
+
+    const total=expenses
+        .reduce((s,x)=>s+Number(x.amount),0);
+
+    const categories={};
+
+    expenses.forEach(x=>{
+
+        categories[x.category]=
+            (categories[x.category]||0)
+            +Number(x.amount);
+
+    });
+
+    const todos=db.todos;
+
+    const todoTotal=todos.length;
+
+    const todoDone=todos.filter(x=>x.done).length;
+
+    const todoRate=todoTotal
+        ? Math.round(todoDone/todoTotal*100)
+        : 0;
+
+    const goals=db.goals;
+
+    const goalRate=goals.length
+        ? Math.round(
+            goals.reduce((s,x)=>s+Number(x.percent),0)
+            /goals.length
+        )
+        : 0;
+
+    let score=70;
+
+    const findings=[];
+    const advice=[];
+
+
+    /* 소비 */
+
+    if(total===0){
+
+        findings.push(
+            "아직 이번 달 소비 데이터가 충분하지 않습니다."
+        );
+
+    }else{
+
+        const entries=Object.entries(categories)
+            .sort((a,b)=>b[1]-a[1]);
+
+        const top=entries[0];
+
+        if(top){
+
+            const ratio=Math.round(
+                top[1]/total*100
+            );
+
+            findings.push(
+                `이번 달 가장 큰 지출 항목은 <strong>${esc(top[0])}</strong>이며 전체 지출의 ${ratio}%를 차지합니다.`
+            );
+
+            if(ratio>=40){
+
+                score-=8;
+
+                advice.push(
+                    `${top[0]} 지출 비중이 높습니다. 다음 달에는 해당 항목의 예산을 먼저 정해두는 것이 좋습니다.`
+                );
+
+            }else{
+
+                score+=3;
+
+            }
+
+        }
+
+        if(total>=3000000){
+
+            score-=10;
+
+            advice.push(
+                "현재 월 지출 규모가 큰 편입니다. 고정비와 변동비를 나누어 점검해 보세요."
+            );
+
+        }
+
+    }
+
+
+    /* 할 일 */
+
+    if(todoTotal===0){
+
+        findings.push(
+            "등록된 할 일이 없어 생활 실행률을 계산하기 어렵습니다."
+        );
+
+    }else{
+
+        findings.push(
+            `할 일 완료율은 <strong>${todoRate}%</strong>입니다.`
+        );
+
+        if(todoRate>=80){
+
+            score+=8;
+
+            advice.push(
+                "할 일 관리가 매우 안정적입니다. 현재 방식을 유지해도 좋습니다."
+            );
+
+        }else if(todoRate<50){
+
+            score-=8;
+
+            advice.push(
+                "완료하지 못한 일이 많습니다. 하루에 가장 중요한 일 1~3개만 먼저 정해보세요."
+            );
+
+        }
+
+    }
+
+
+    /* 목표 */
+
+    if(goals.length){
+
+        findings.push(
+            `현재 목표 평균 달성률은 <strong>${goalRate}%</strong>입니다.`
+        );
+
+        if(goalRate>=80){
+
+            score+=8;
+
+        }else if(goalRate<40){
+
+            score-=7;
+
+            advice.push(
+                "목표 달성률이 낮습니다. 목표를 더 작은 단계로 나누면 실행하기 쉬워집니다."
+            );
+
+        }
+
+    }
+
+
+    /* 메모 */
+
+    if(db.memos.length>=5){
+
+        findings.push(
+            `최근 ${db.memos.length}개의 생활 메모가 저장되어 있습니다.`
+        );
+
+    }
+
+
+    /* 데이터 부족 */
+
+    if(
+        expenses.length===0 &&
+        todoTotal===0 &&
+        goals.length===0
+    ){
+
+        score=50;
+
+        advice.push(
+            "가계부, 할 일, 목표를 며칠간 기록하면 AI 분석 정확도가 높아집니다."
+        );
+
+    }
+
+
+    score=Math.max(
+        0,
+        Math.min(100,Math.round(score))
+    );
+
+
+    let status;
+
+    if(score>=85){
+
+        status="매우 좋음";
+
+    }else if(score>=70){
+
+        status="양호";
+
+    }else if(score>=55){
+
+        status="보통";
+
+    }else{
+
+        status="관리 필요";
+
+    }
+
+
+    return {
+
+        score,
+        status,
+        total,
+        todoRate,
+        goalRate,
+        findings,
+        advice
+
+    };
+
+}
+
+
+/* =========================================================
+   AI SCREEN
+========================================================= */
+
+function openAI(){
+
+    const result=AIAnalyze();
+
+    openModal('ai');
+
+    const title=document.getElementById("modalTitle");
+
+    const content=document.getElementById("modalContent");
+
+    title.textContent="🤖 AI 생활분석";
+
+    content.innerHTML=`
+
+        <div class="ai-box">
+
+            <div class="ai-big-score">
+
+                <div class="number">
+                    ${result.score}
+                </div>
+
+                <div class="text">
+                    생활지수 · ${result.status}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-grid">
+
+            <div class="stat">
+                <div class="name">이번 달 지출</div>
+                <div class="value">
+                    ${money(result.total)}
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="name">할 일 완료율</div>
+                <div class="value">
+                    ${result.todoRate}%
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="name">목표 달성률</div>
+                <div class="value">
+                    ${result.goalRate}%
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="name">저장 데이터</div>
+                <div class="value">
+                    ${db.expenses.length+
+                      db.todos.length+
+                      db.memos.length}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="section-title"
+             style="padding:0;margin-top:20px">
+             🔍 AI가 발견한 패턴
+        </div>
+
+        <div class="ai-box">
+
+            ${
+                result.findings.length
+                ? result.findings.map(x=>`
+                    <div class="analysis-item">
+                        ${x}
+                    </div>
+                `).join("")
+                : `<div class="empty">분석할 데이터가 없습니다.</div>`
+            }
+
+        </div>
+
+
+        <div class="section-title"
+             style="padding:0">
+             💡 AI 생활 제안
+        </div>
+
+        <div class="ai-box">
+
+            ${
+                result.advice.length
+                ? result.advice.map(x=>`
+                    <div class="analysis-item">
+                        💡 ${x}
+                    </div>
+                `).join("")
+                : `
+                    <div class="analysis-item good">
+                        현재 생활 패턴이 안정적으로 보입니다.
+                        지금의 좋은 습관을 유지해보세요.
+                    </div>
+                `
+            }
+
+        </div>
+
+
+        <button class="btn btn-blue"
+                onclick="openAI()">
+            🔄 다시 분석
+        </button>
+
+    `;
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function settingsHTML(){
+
+    return `
+
+        <div class="ai-box">
+
+            <strong>📱 MY LIFE OS 데이터</strong>
+
+            <div class="list-sub"
+                 style="margin-top:8px">
+                모든 데이터는 현재 휴대폰 브라우저의
+                LocalStorage에 저장됩니다.
+            </div>
+
+        </div>
+
+
+        <button class="btn btn-blue"
+                onclick="exportData()">
+            📤 데이터 백업
+        </button>
+
+
+        <button class="btn btn-gray"
+                onclick="document.getElementById('importFile').click()">
+            📥 데이터 복원
+        </button>
+
+        <input id="importFile"
+               type="file"
+               accept=".json"
+               style="display:none"
+               onchange="importData(event)">
+
+
+        <button class="btn btn-red"
+                onclick="resetData()">
+            🗑 전체 데이터 삭제
+        </button>
+
+    `;
+
+}
+
+
+/* =========================================================
+   BACKUP
+========================================================= */
+
+function exportData(){
+
+    const blob=new Blob(
+        [JSON.stringify(db,null,2)],
+        {type:"application/json"}
+    );
+
+    const url=URL.createObjectURL(blob);
+
+    const a=document.createElement("a");
+
+    a.href=url;
+
+    a.download=
+        "MY_LIFE_OS_BACKUP_"+
+        today()+
+        ".json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    toast("백업 파일을 만들었습니다");
+
+}
+
+function importData(event){
+
+    const file=event.target.files[0];
+
+    if(!file)return;
+
+    const reader=new FileReader();
+
+    reader.onload=function(){
+
+        try{
+
+            const data=JSON.parse(reader.result);
+
+            db={
+                ...defaultDB(),
+                ...data
+            };
+
+            saveDB();
+
+            toast("데이터가 복원되었습니다");
+
+            setTimeout(()=>{
+                openModal("settings");
+            },500);
+
+        }catch(e){
+
+            alert("잘못된 백업 파일입니다.");
+
+        }
+
+    };
+
+    reader.readAsText(file);
+
+}
+
+function resetData(){
+
+    if(!confirm(
+        "모든 데이터가 삭제됩니다.\n정말 삭제할까요?"
+    ))return;
+
+    db=defaultDB();
+
+    saveDB();
+
+    closeModal();
+
+    toast("모든 데이터가 삭제되었습니다");
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard(){
+
+    const currentMonth=month();
+
+    const total=db.expenses
+        .filter(x=>x.date.startsWith(currentMonth))
+        .reduce((s,x)=>s+Number(x.amount),0);
+
+    document.getElementById("expenseTotal")
+        .textContent=money(total);
+
+
+    const done=db.todos.filter(x=>x.done).length;
+
+    document.getElementById("todoDone")
+        .textContent=done;
+
+
+    const goalRate=db.goals.length
+        ? Math.round(
+            db.goals.reduce(
+                (s,x)=>s+Number(x.percent),0
+            )/db.goals.length
+        )
+        : 0;
+
+    document.getElementById("goalProgress")
+        .textContent=goalRate+"%";
+
+
+    document.getElementById("memoCount")
+        .textContent=db.memos.length;
+
+
+    const ai=AIAnalyze();
+
+    document.getElementById("miniScore")
+        .textContent=ai.score;
+
+
+    document.getElementById("miniSummary")
+        .textContent=
+        ai.status+
+        " 상태입니다. "+
+        (
+            ai.advice[0]
+            ? ai.advice[0]
+            : "현재 기록을 계속 쌓으면 더 정확한 분석이 가능합니다."
+        );
+
+
+    renderTodayTodo();
+
+}
+
+function renderTodayTodo(){
+
+    const box=document.getElementById("todayTodo");
+
+    const list=db.todos
+        .filter(x=>x.date===today() && !x.done);
+
+    if(!list.length){
+
+        box.innerHTML=`
+            <div class="empty">
+                오늘 남은 할 일이 없습니다. 🎉
+            </div>
+        `;
+
+        return;
+
+    }
+
+    box.innerHTML=list.map(x=>`
+
+        <div class="list-item">
+
+            <div class="list-main">
+                <div class="list-title">
+                    ${esc(x.text)}
+                </div>
+
+                <div class="list-sub">
+                    오늘의 할 일
+                </div>
+            </div>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function updateDate(){
+
+    const d=new Date();
+
+    const days=[
+        "일","월","화","수","목","금","토"
+    ];
+
+    document.getElementById("todayText")
+        .textContent=
+        `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+function scrollTopPage(){
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+updateDate();
+
+updateDashboard();
+
+
+/* =========================================================
+   AUTO SAVE SAFETY
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    saveDB
+);
+
+</script>
+
+</body>
+</html>
