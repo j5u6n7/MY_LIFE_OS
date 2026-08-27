@@ -515,6 +515,65 @@ textarea{
     font-size:13px;
 }
 
+/* CALCULATOR CSS */
+
+.calc-screen {
+    background: #0f172a;
+    color: #ffffff;
+    text-align: right;
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    word-break: break-all;
+}
+
+.calc-formula {
+    font-size: 13px;
+    color: #94a3b8;
+    min-height: 18px;
+}
+
+.calc-value {
+    font-size: 32px;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.calc-btn {
+    height: 52px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.calc-btn:active {
+    background: #e2e8f0;
+    transform: scale(0.96);
+}
+
+.calc-btn.op {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.calc-btn.action {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.calc-btn.equal {
+    background: #2563eb;
+    color: #ffffff;
+}
+
 /* RESPONSIVE */
 
 @media(max-width:390px){
@@ -722,6 +781,8 @@ textarea{
 const DB_KEY = "MY_LIFE_OS_DATABASE_V1";
 
 let db = loadDB();
+let calcDisplay = "0";
+let calcLastValue = 0; // 계산기 최종 연산 결과 저장용
 
 function defaultDB(){
 
@@ -827,7 +888,7 @@ function toast(text){
    MODAL WITH BACK-BUTTON (POPSTATE) HANDLING
 ========================================================= */
 
-function openModal(type){
+function openModal(type, prefillValue = null){
 
     const modal=document.getElementById("modal");
 
@@ -835,7 +896,6 @@ function openModal(type){
 
     const content=document.getElementById("modalContent");
 
-    // 모달이 열려있지 않을 때만 히스토리 상태 추가
     if(!modal.classList.contains("show")){
         history.pushState({ modalOpen: true }, "");
     }
@@ -846,7 +906,7 @@ function openModal(type){
 
         title.textContent="💰 가계부";
 
-        content.innerHTML=expenseHTML();
+        content.innerHTML=expenseHTML(prefillValue);
 
     }
 
@@ -923,7 +983,6 @@ function closeModal(fromPopstate = false){
     if(modal.classList.contains("show")){
         modal.classList.remove("show");
 
-        // UI 버튼(X버튼 등)으로 닫았을 경우 생성해둔 히스토리 정리
         if(!fromPopstate && history.state && history.state.modalOpen){
             history.back();
         }
@@ -931,14 +990,12 @@ function closeModal(fromPopstate = false){
 
 }
 
-/* 모달 바깥 배경 클릭 시 닫기 */
 function handleModalBgClick(e){
     if(e.target.id === "modal"){
         closeModal();
     }
 }
 
-/* 뒤로가기 버튼 감지 이벤트 */
 window.addEventListener("popstate", function(event){
 
     const modal = document.getElementById("modal");
@@ -954,7 +1011,7 @@ window.addEventListener("popstate", function(event){
    EXPENSE
 ========================================================= */
 
-function expenseHTML(){
+function expenseHTML(prefillValue = null){
 
     const list=db.expenses.slice().reverse();
 
@@ -963,6 +1020,7 @@ function expenseHTML(){
         <div class="form-group">
             <label>금액</label>
             <input id="expAmount" type="number"
+                   value="${prefillValue !== null ? prefillValue : ''}"
                    placeholder="예: 15000">
         </div>
 
@@ -1458,7 +1516,7 @@ function deleteShopping(i){
 
 
 /* =========================================================
-   MEMO
+   MEMO (고유 ID 할당 기반 알고리즘 적용)
 ========================================================= */
 
 function memoHTML(){
@@ -1482,7 +1540,7 @@ function memoHTML(){
         <div style="margin-top:15px">
 
         ${
-            db.memos.slice().reverse().map((x,i)=>`
+            db.memos.slice().reverse().map((x)=>`
 
                 <div class="analysis-item">
 
@@ -1491,7 +1549,7 @@ function memoHTML(){
                         <span class="list-sub">${x.date}</span>
 
                         <button class="delete"
-                                onclick="deleteMemo(${db.memos.length-1-i})">
+                                onclick="deleteMemo('${x.id}')">
                             ×
                         </button>
 
@@ -1520,6 +1578,7 @@ function addMemo(){
 
     db.memos.push({
 
+        id: Date.now().toString(),
         text,
         date:today()
 
@@ -1531,9 +1590,9 @@ function addMemo(){
 
 }
 
-function deleteMemo(i){
+function deleteMemo(id){
 
-    db.memos.splice(i,1);
+    db.memos = db.memos.filter(x => x.id !== id);
 
     saveDB();
 
@@ -1644,64 +1703,111 @@ function deleteItem(i){
 
 
 /* =========================================================
-   CALCULATOR
+   CALCULATOR (그리드 인터페이스 & 가계부 연동 기능)
 ========================================================= */
 
-function calculatorHTML(){
+function calculatorHTML() {
 
     return `
-
-        <div class="form-group">
-            <label>계산식</label>
-            <input id="calcInput"
-                   placeholder="예: 15000*12">
+        <div class="calc-screen">
+            <div class="calc-formula" id="calcFormula"></div>
+            <div class="calc-value" id="calcDisplay">${calcDisplay}</div>
         </div>
 
-        <button class="btn btn-blue"
-                onclick="calculate()">
-            계산
+        <div class="calc-grid">
+            <button class="calc-btn action" onclick="pressCalc('C')">C</button>
+            <button class="calc-btn op" onclick="pressCalc('(')">(</button>
+            <button class="calc-btn op" onclick="pressCalc(')')">)</button>
+            <button class="calc-btn op" onclick="pressCalc('/')">÷</button>
+
+            <button class="calc-btn" onclick="pressCalc('7')">7</button>
+            <button class="calc-btn" onclick="pressCalc('8')">8</button>
+            <button class="calc-btn" onclick="pressCalc('9')">9</button>
+            <button class="calc-btn op" onclick="pressCalc('*')">×</button>
+
+            <button class="calc-btn" onclick="pressCalc('4')">4</button>
+            <button class="calc-btn" onclick="pressCalc('5')">5</button>
+            <button class="calc-btn" onclick="pressCalc('6')">6</button>
+            <button class="calc-btn op" onclick="pressCalc('-')">-</button>
+
+            <button class="calc-btn" onclick="pressCalc('1')">1</button>
+            <button class="calc-btn" onclick="pressCalc('2')">2</button>
+            <button class="calc-btn" onclick="pressCalc('3')">3</button>
+            <button class="calc-btn op" onclick="pressCalc('+')">+</button>
+
+            <button class="calc-btn" onclick="pressCalc('0')">0</button>
+            <button class="calc-btn" onclick="pressCalc('00')">00</button>
+            <button class="calc-btn" onclick="pressCalc('.')">.</button>
+            <button class="calc-btn equal" onclick="calculate()">=</button>
+        </div>
+
+        <button class="btn btn-green" style="margin-top:15px;" onclick="sendCalcToExpense()">
+            💰 이 연산 결과를 가계부 금액으로 입력하기
         </button>
-
-        <div class="analysis-item"
-             id="calcResult">
-            결과가 여기에 표시됩니다.
-        </div>
-
     `;
 
 }
 
-function calculate(){
+function pressCalc(val) {
 
-    const input=document
-        .getElementById("calcInput")
-        .value;
+    const displayEl = document.getElementById("calcDisplay");
 
-    const result=document
-        .getElementById("calcResult");
+    if (val === 'C') {
+        calcDisplay = "0";
+        calcLastValue = 0;
+        document.getElementById("calcFormula").textContent = "";
+    } else {
+        if (calcDisplay === "0" && !isNaN(val)) {
+            calcDisplay = val;
+        } else {
+            calcDisplay += val;
+        }
+    }
 
-    if(!/^[0-9+\-*/().% ]+$/.test(input)){
+    displayEl.textContent = calcDisplay;
 
-        result.textContent="올바른 계산식을 입력하세요.";
+}
 
+function calculate() {
+
+    const displayEl = document.getElementById("calcDisplay");
+    const formulaEl = document.getElementById("calcFormula");
+
+    try {
+        formulaEl.textContent = calcDisplay + " =";
+        
+        const sanitizedFormula = calcDisplay.replace(/[^0-9+\-*/().]/g, '');
+        const result = Function('"use strict"; return (' + sanitizedFormula + ')')();
+
+        if (result === Infinity || isNaN(result)) {
+            displayEl.textContent = "오류";
+            calcDisplay = "0";
+            calcLastValue = 0;
+        } else {
+            const roundedResult = Math.round(result * 100000000) / 100000000;
+            displayEl.textContent = Number(roundedResult).toLocaleString("ko-KR");
+            calcDisplay = String(roundedResult);
+            calcLastValue = roundedResult;
+        }
+    } catch (e) {
+        displayEl.textContent = "오류";
+        calcDisplay = "0";
+        calcLastValue = 0;
+    }
+
+}
+
+function sendCalcToExpense(){
+
+    calculate(); // 현재 결과 확정
+
+    if(calcLastValue <= 0) {
+        toast("0원 이상의 금액만 전달 가능합니다.");
         return;
-
     }
 
-    try{
-
-        const value=Function(
-            '"use strict";return ('+input+')'
-        )();
-
-        result.textContent=
-            Number(value).toLocaleString("ko-KR");
-
-    }catch(e){
-
-        result.textContent="계산할 수 없습니다.";
-
-    }
+    openModal("expense", calcLastValue);
+    toast(`${money(calcLastValue)}가 가계부에 입력되었습니다.`);
 
 }
 
