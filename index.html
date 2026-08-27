@@ -682,7 +682,7 @@ textarea{
         <div class="stat-grid">
 
             <div class="stat">
-                <div class="name">이번 달 지출</div>
+                <div class="name">이번 달 청구 지출</div>
                 <div class="value" id="expenseTotal">0원</div>
             </div>
 
@@ -782,7 +782,7 @@ const DB_KEY = "MY_LIFE_OS_DATABASE_V1";
 
 let db = loadDB();
 let calcDisplay = "0";
-let calcLastValue = 0; // 계산기 최종 연산 결과 저장용
+let calcLastValue = 0;
 
 function defaultDB(){
 
@@ -881,6 +881,40 @@ function toast(text){
         t.classList.remove("show");
     },1800);
 
+}
+
+// 특정 월(YYYY-MM)에 청구될 가계부 총 지출 금액 계산 함수 (할부 로직 포함)
+function calculateMonthlyExpense(targetMonth) {
+    const targetDate = new Date(targetMonth + "-01");
+    const targetYear = targetDate.getFullYear();
+    const targetMonthIdx = targetDate.getMonth();
+
+    let total = 0;
+
+    db.expenses.forEach(x => {
+        const payType = x.payType || "cash"; // 기본값 cash
+        const expDate = new Date(x.date.slice(0,7) + "-01");
+        const expYear = expDate.getFullYear();
+        const expMonthIdx = expDate.getMonth();
+
+        // 지출 등록 달로부터 경과한 개월 수
+        const monthDiff = (targetYear - expYear) * 12 + (targetMonthIdx - expMonthIdx);
+
+        if (payType === "installment") {
+            const months = Number(x.installMonths) || 1;
+            // 할부 기간 내에 해당하는 경우 매월 (총금액 / 개월수) 합산
+            if (monthDiff >= 0 && monthDiff < months) {
+                total += Math.round(Number(x.amount) / months);
+            }
+        } else {
+            // 현금 및 카드 일시불은 당월에만 100% 반영
+            if (monthDiff === 0) {
+                total += Number(x.amount);
+            }
+        }
+    });
+
+    return total;
 }
 
 
@@ -1008,7 +1042,7 @@ window.addEventListener("popstate", function(event){
 
 
 /* =========================================================
-   EXPENSE
+   EXPENSE (결제 수단 및 할부 개월 수 반영)
 ========================================================= */
 
 function expenseHTML(prefillValue = null){
@@ -1018,10 +1052,24 @@ function expenseHTML(prefillValue = null){
     return `
 
         <div class="form-group">
-            <label>금액</label>
+            <label>금액 (총 금액)</label>
             <input id="expAmount" type="number"
                    value="${prefillValue !== null ? prefillValue : ''}"
                    placeholder="예: 15000">
+        </div>
+
+        <div class="form-group">
+            <label>결제 수단</label>
+            <select id="expPayType" onchange="toggleInstallmentField()">
+                <option value="cash">현금</option>
+                <option value="card_single">카드 (일시불)</option>
+                <option value="installment">카드 (할부)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="installGroup" style="display:none;">
+            <label>할부 개월 수</label>
+            <input id="expInstallMonths" type="number" min="2" max="36" value="3" placeholder="예: 3">
         </div>
 
         <div class="form-group">
@@ -1056,7 +1104,22 @@ function expenseHTML(prefillValue = null){
 
         ${
             list.length
-            ? list.slice(0,20).map((x,i)=>`
+            ? list.slice(0,20).map((x)=>{
+                const origIndex = db.expenses.indexOf(x);
+                const payType = x.payType || "cash";
+                let payBadge = "💵 현금";
+                let amountSub = "";
+
+                if (payType === "card_single") {
+                    payBadge = "💳 카드(일시불)";
+                } else if (payType === "installment") {
+                    const months = x.installMonths || 1;
+                    const monthlyAmt = Math.round(x.amount / months);
+                    payBadge = `💳 카드(${months}개월 할부)`;
+                    amountSub = `<div class="list-sub" style="text-align:right;">월 ${money(monthlyAmt)}</div>`;
+                }
+
+                return `
                 <div class="list-item">
 
                     <div class="list-main">
@@ -1065,19 +1128,22 @@ function expenseHTML(prefillValue = null){
                         </div>
 
                         <div class="list-sub">
-                            ${x.date} · ${x.category}
+                            ${x.date} · ${x.category} · ${payBadge}
                         </div>
                     </div>
 
-                    <b>${money(x.amount)}</b>
+                    <div>
+                        <b>${money(x.amount)}</b>
+                        ${amountSub}
+                    </div>
 
                     <button class="delete"
-                            onclick="deleteExpense(${db.expenses.indexOf(x)})">
+                            onclick="deleteExpense(${origIndex})">
                         ×
                     </button>
 
                 </div>
-            `).join("")
+            `}).join("")
             : `<div class="empty">아직 지출 기록이 없습니다.</div>`
         }
 
@@ -1085,27 +1151,42 @@ function expenseHTML(prefillValue = null){
 
 }
 
+function toggleInstallmentField() {
+    const payType = document.getElementById("expPayType").value;
+    const installGroup = document.getElementById("installGroup");
+    if (payType === "installment") {
+        installGroup.style.display = "block";
+    } else {
+        installGroup.style.display = "none";
+    }
+}
+
 function addExpense(){
 
-    const amount=Number(
-        document.getElementById("expAmount").value
-    );
+    const amount = Number(document.getElementById("expAmount").value);
+    const payType = document.getElementById("expPayType").value;
+    let installMonths = 1;
 
     if(!amount){
-
         toast("금액을 입력하세요");
-
         return;
+    }
 
+    if (payType === "installment") {
+        installMonths = Number(document.getElementById("expInstallMonths").value);
+        if (!installMonths || installMonths < 2) {
+            toast("할부 개월 수를 2개월 이상 입력하세요");
+            return;
+        }
     }
 
     db.expenses.push({
-
         amount,
-        category:document.getElementById("expCategory").value,
-        memo:document.getElementById("expMemo").value,
-        date:today()
-
+        payType,
+        installMonths,
+        category: document.getElementById("expCategory").value,
+        memo: document.getElementById("expMemo").value,
+        date: today()
     });
 
     saveDB();
@@ -1516,7 +1597,7 @@ function deleteShopping(i){
 
 
 /* =========================================================
-   MEMO (고유 ID 할당 기반 알고리즘 적용)
+   MEMO
 ========================================================= */
 
 function memoHTML(){
@@ -1703,7 +1784,7 @@ function deleteItem(i){
 
 
 /* =========================================================
-   CALCULATOR (그리드 인터페이스 & 가계부 연동 기능)
+   CALCULATOR
 ========================================================= */
 
 function calculatorHTML() {
@@ -1799,7 +1880,7 @@ function calculate() {
 
 function sendCalcToExpense(){
 
-    calculate(); // 현재 결과 확정
+    calculate();
 
     if(calcLastValue <= 0) {
         toast("0원 이상의 금액만 전달 가능합니다.");
@@ -1819,21 +1900,30 @@ function sendCalcToExpense(){
 function AIAnalyze(){
 
     const currentMonth=month();
-
-    const expenses=db.expenses
-        .filter(x=>x.date.startsWith(currentMonth));
-
-    const total=expenses
-        .reduce((s,x)=>s+Number(x.amount),0);
+    const total=calculateMonthlyExpense(currentMonth);
 
     const categories={};
 
-    expenses.forEach(x=>{
+    db.expenses.forEach(x=>{
+        const payType = x.payType || "cash";
+        const months = x.installMonths || 1;
+        
+        // 당월에 지출액 발생분 계산
+        let effectiveAmount = 0;
+        if (payType === "installment") {
+            const expDate = new Date(x.date.slice(0,7) + "-01");
+            const targetDate = new Date(currentMonth + "-01");
+            const monthDiff = (targetDate.getFullYear() - expDate.getFullYear()) * 12 + (targetDate.getMonth() - expDate.getMonth());
+            if (monthDiff >= 0 && monthDiff < months) {
+                effectiveAmount = Math.round(Number(x.amount) / months);
+            }
+        } else if (x.date.startsWith(currentMonth)) {
+            effectiveAmount = Number(x.amount);
+        }
 
-        categories[x.category]=
-            (categories[x.category]||0)
-            +Number(x.amount);
-
+        if (effectiveAmount > 0) {
+            categories[x.category] = (categories[x.category] || 0) + effectiveAmount;
+        }
     });
 
     const todos=db.todos;
@@ -1883,7 +1973,7 @@ function AIAnalyze(){
             );
 
             findings.push(
-                `이번 달 가장 큰 지출 항목은 <strong>${esc(top[0])}</strong>이며 전체 지출의 ${ratio}%를 차지합니다.`
+                `이번 달 청구 지출 중 가장 큰 항목은 <strong>${esc(top[0])}</strong>이며 전체의 ${ratio}%를 차지합니다.`
             );
 
             if(ratio>=40){
@@ -1907,7 +1997,7 @@ function AIAnalyze(){
             score-=10;
 
             advice.push(
-                "현재 월 지출 규모가 큰 편입니다. 고정비와 변동비를 나누어 점검해 보세요."
+                "현재 월 예상 지출 규모가 큰 편입니다. 고정비와 변동비를 나누어 점검해 보세요."
             );
 
         }
@@ -1989,7 +2079,7 @@ function AIAnalyze(){
     /* 데이터 부족 */
 
     if(
-        expenses.length===0 &&
+        db.expenses.length===0 &&
         todoTotal===0 &&
         goals.length===0
     ){
@@ -2083,7 +2173,7 @@ function openAI(){
         <div class="stat-grid">
 
             <div class="stat">
-                <div class="name">이번 달 지출</div>
+                <div class="name">이번 달 예상 청구액</div>
                 <div class="value">
                     ${money(result.total)}
                 </div>
@@ -2312,10 +2402,7 @@ function resetData(){
 function updateDashboard(){
 
     const currentMonth=month();
-
-    const total=db.expenses
-        .filter(x=>x.date.startsWith(currentMonth))
-        .reduce((s,x)=>s+Number(x.amount),0);
+    const total=calculateMonthlyExpense(currentMonth);
 
     document.getElementById("expenseTotal")
         .textContent=money(total);
