@@ -161,13 +161,6 @@ button{
     box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
 }
 
-.card-fortune {
-    padding: 18px;
-    background: linear-gradient(135deg, #4c1d95, #6d28d9);
-    color: #ffffff;
-    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
-}
-
 .card-expense-dash {
     padding: 18px;
     background: linear-gradient(135deg, #059669, #10b981);
@@ -203,11 +196,6 @@ button{
 .ai-title{ display:flex; justify-content:space-between; align-items:center; }
 .ai-score{ font-size:22px; font-weight:900; }
 .ai-summary{ margin-top:6px; color:#eff6ff; font-size:12px; line-height:1.5; }
-
-.fortune-header { display: flex; justify-content: space-between; align-items: center; }
-.fortune-title { font-size: 15px; font-weight: 800; }
-.fortune-score { font-size: 20px; font-weight: 900; color: #fde047; }
-.fortune-text { margin-top: 8px; font-size: 12px; line-height: 1.5; opacity: 0.95; }
 
 /* MENU */
 
@@ -607,10 +595,9 @@ let calcDisplay = "0";
 let calcLastValue = 0;
 let draggedCardId = null;
 
-// 마스터 메뉴 정의
+// 마스터 메뉴 정의 (운세 삭제)
 const MENU_LIST = [
     { id: "ai", icon: "🤖", label: "AI 분석", action: openAI },
-    { id: "fortune", icon: "🔮", label: "오늘의 운세", action: () => openModal('fortune') },
     { id: "expense", icon: "💰", label: "가계부", action: () => openModal('expense') },
     { id: "todo", icon: "✅", label: "할 일", action: () => openModal('todo') },
     { id: "schedule", icon: "📅", label: "일정", action: () => openModal('schedule') },
@@ -623,8 +610,7 @@ const MENU_LIST = [
 
 function defaultDB(){
     return {
-        userInfo: { name: "", birthDate: "", calendarType: "solar", birthTime: "unknown" },
-        placedCardIds: ["ai", "fortune"],
+        placedCardIds: ["ai", "expense"],
         expenses:[], todos:[], schedules:[], goals:[], shopping:[], memos:[], items:[]
     };
 }
@@ -635,8 +621,10 @@ function loadDB(){
         if(data){
             const parsed = JSON.parse(data);
             if (!parsed.placedCardIds) {
-                parsed.placedCardIds = ["ai", "fortune"];
+                parsed.placedCardIds = ["ai", "expense"];
             }
+            // 기존 데이터에 잔재하는 fortune ID 제거
+            parsed.placedCardIds = parsed.placedCardIds.filter(id => id !== 'fortune');
             return { ...defaultDB(), ...parsed };
         }
     }catch(e){}
@@ -726,7 +714,7 @@ function handleDrop(e) {
 function togglePlaceMenu(id, e) {
     if (e) e.stopPropagation();
     if (db.placedCardIds.includes(id)) {
-        removeCard(id);
+        removeCard(id, e);
     } else {
         placeCard(id);
     }
@@ -740,7 +728,8 @@ function placeCard(id) {
     }
 }
 
-function removeCard(id) {
+function removeCard(id, e) {
+    if (e) e.stopPropagation();
     db.placedCardIds = db.placedCardIds.filter(cId => cId !== id);
     saveDB();
     toast("대시보드에서 제거되었습니다");
@@ -794,7 +783,6 @@ function renderDashCards() {
 
     board.innerHTML = db.placedCardIds.map(id => {
         if (id === 'ai') return renderAICard();
-        if (id === 'fortune') return renderFortuneCard();
         if (id === 'expense') return renderExpenseCard();
         if (id === 'todo') return renderTodoCard();
         return renderGenericCard(id);
@@ -806,8 +794,8 @@ function renderDashCards() {
 function renderAICard() {
     const ai = AIAnalyze();
     return `
-        <div class="drag-card card-ai" draggable="true" ondragstart="handleDragStart(event, 'ai')" ondragend="handleDragEnd(event)">
-            <button class="card-remove-btn" onclick="removeCard('ai')">✕ 제거</button>
+        <div class="drag-card card-ai" draggable="true" ondragstart="handleDragStart(event, 'ai')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('ai')">
+            <button class="card-remove-btn" onclick="removeCard('ai', event)">✕ 제거</button>
             <div class="greeting">오늘의 생활상태 (${getTodayText()})</div>
             <div class="today">오늘도 좋은 하루입니다.</div>
             <div class="ai-mini">
@@ -823,33 +811,17 @@ function renderAICard() {
     `;
 }
 
-function renderFortuneCard() {
-    const fortune = calculateDailyFortune();
-    return `
-        <div class="drag-card card-fortune" draggable="true" ondragstart="handleDragStart(event, 'fortune')" ondragend="handleDragEnd(event)">
-            <button class="card-remove-btn" onclick="removeCard('fortune')">✕ 제거</button>
-            <div class="fortune-header">
-                <div class="fortune-title">🔮 오늘의 운세</div>
-                <div class="fortune-score">${fortune ? fortune.score + '점' : '--점'}</div>
-            </div>
-            <div class="fortune-text">
-                ${fortune ? fortune.summary : '생년월일을 입력하시면 맞춤 운세가 제공됩니다.'}
-            </div>
-        </div>
-    `;
-}
-
 function renderExpenseCard() {
     const currentMonth = month();
     const monthExpense = calculateMonthlyExpense(currentMonth);
     return `
-        <div class="drag-card card-expense-dash" draggable="true" ondragstart="handleDragStart(event, 'expense')" ondragend="handleDragEnd(event)">
-            <button class="card-remove-btn" onclick="removeCard('expense')">✕ 제거</button>
-            <div class="fortune-header">
-                <div class="fortune-title">📊 이번 달 지출 현황</div>
+        <div class="drag-card card-expense-dash" draggable="true" ondragstart="handleDragStart(event, 'expense')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('expense')">
+            <button class="card-remove-btn" onclick="removeCard('expense', event)">✕ 제거</button>
+            <div class="row">
+                <div style="font-size:15px; font-weight:800;">📊 이번 달 지출 현황</div>
                 <div style="font-size:18px; font-weight:900;">${money(monthExpense)}</div>
             </div>
-            <div class="fortune-text" style="color:#e6fffa;">
+            <div style="margin-top:8px; font-size:12px; opacity:0.95; color:#e6fffa;">
                 이번 달(${currentMonth.split('-')[1]}월)의 예상 청구 금액입니다.
             </div>
         </div>
@@ -859,9 +831,9 @@ function renderExpenseCard() {
 function renderTodoCard() {
     const todayTodoList = db.todos.filter(x => x.date === today() && !x.done);
     return `
-        <div class="drag-card card-todo-dash" draggable="true" ondragstart="handleDragStart(event, 'todo')" ondragend="handleDragEnd(event)">
-            <button class="card-remove-btn" style="background:#cbd5e1; color:#0f172a;" onclick="removeCard('todo')">✕ 제거</button>
-            <div class="fortune-header">
+        <div class="drag-card card-todo-dash" draggable="true" ondragstart="handleDragStart(event, 'todo')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('todo')">
+            <button class="card-remove-btn" style="background:#cbd5e1; color:#0f172a;" onclick="removeCard('todo', event)">✕ 제거</button>
+            <div class="row">
                 <div style="font-size:15px; font-weight:800; color:#0f172a;">✅ 남은 오늘의 할 일</div>
                 <div style="font-size:18px; font-weight:900; color:var(--blue);">${todayTodoList.length}개</div>
             </div>
@@ -877,8 +849,8 @@ function renderGenericCard(id) {
     if (!item) return '';
     return `
         <div class="drag-card card-generic-dash" draggable="true" ondragstart="handleDragStart(event, '${id}')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('${id}')">
-            <button class="card-remove-btn" style="background:#cbd5e1; color:#0f172a;" onclick="removeCard('${id}')">✕ 제거</button>
-            <div class="fortune-header">
+            <button class="card-remove-btn" style="background:#cbd5e1; color:#0f172a;" onclick="removeCard('${id}', event)">✕ 제거</button>
+            <div class="row">
                 <div style="font-size:15px; font-weight:800; color:#0f172a;">${item.icon} ${item.label}</div>
             </div>
             <div style="margin-top:8px; font-size:12px; color:var(--sub);">
@@ -900,8 +872,7 @@ function openModal(type, prefillValue = null){
     if(!modal.classList.contains("show")){ history.pushState({ modalOpen: true }, ""); }
     modal.classList.add("show");
 
-    if(type==="fortune"){ title.textContent="🔮 오늘의 맞춤 운세"; content.innerHTML=fortuneHTML(); }
-    else if(type==="expense"){ title.textContent="💰 가계부"; content.innerHTML=expenseHTML(prefillValue); }
+    if(type==="expense"){ title.textContent="💰 가계부"; content.innerHTML=expenseHTML(prefillValue); }
     else if(type==="todo"){ title.textContent="✅ 할 일"; content.innerHTML=todoHTML(); }
     else if(type==="schedule"){ title.textContent="📅 일정"; content.innerHTML=scheduleHTML(); }
     else if(type==="goal"){ title.textContent="🎯 목표"; content.innerHTML=goalHTML(); }
@@ -924,182 +895,7 @@ function handleModalBgClick(e){ if(e.target.id === "modal"){ closeModal(); } }
 window.addEventListener("popstate", function(){ if(document.getElementById("modal").classList.contains("show")){ closeModal(true); } });
 
 /* =========================================================
-   1. FORTUNE MODULE
-========================================================= */
-
-const CHEONGAN = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"];
-const JIZI = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"];
-
-function calculateDailyFortune() {
-    const info = db.userInfo;
-    if (!info || !info.birthDate) return null;
-    const bDate = new Date(info.birthDate);
-    if (isNaN(bDate.getTime())) return null;
-
-    const tDate = new Date();
-    const dateSeed = tDate.getFullYear() * 10000 + (tDate.getMonth() + 1) * 100 + tDate.getDate();
-    const birthSeed = bDate.getFullYear() * 10000 + (bDate.getMonth() + 1) * 100 + bDate.getDate();
-
-    let timeBonus = info.birthTime !== "unknown" ? Number(info.birthTime) * 3 : 0;
-    let calendarBonus = info.calendarType === "lunar" ? 7 : 0;
-
-    const seed = (dateSeed * 31 + birthSeed * 17 + timeBonus + calendarBonus) % 10000;
-    const score = 62 + (seed % 38);
-
-    const myDayGan = CHEONGAN[birthSeed % 10];
-    const todayGan = CHEONGAN[dateSeed % 10];
-    const todayJi = JIZI[dateSeed % 12];
-
-    const generalTexts = [
-        "기분 좋은 에너지와 자신감이 넘치는 하루입니다. 망설이던 일이 있다면 시도해보세요.",
-        "평온함 속에서 성과가 기대되는 날입니다. 주변과의 소통이 유익합니다.",
-        "새로운 기회와 좋은 인연이 찾아오는 운 흐름입니다.",
-        "노력한 만큼 분명한 결실을 맺을 수 있는 하루입니다.",
-        "신중함이 필요한 하루입니다. 주변의 의견을 경청해보세요."
-    ];
-
-    const moneyTexts = [
-        "뜻밖의 수입이나 유익한 재테크 아이디어가 떠오를 수 있습니다.",
-        "불필요한 지출을 줄이고 자산을 점검하기에 최적의 날입니다.",
-        "계획에 없던 소비 욕구가 생길 수 있으니 주의하세요.",
-        "작은 투자가 큰 보람으로 돌아올 기운이 감돕니다."
-    ];
-
-    const loveTexts = [
-        "대화에서 깊은 공감과 따뜻한 신뢰를 형성하게 됩니다.",
-        "작은 매력이 돋보이는 날입니다. 다정한 표현이 운을 높입니다.",
-        "상대방의 입장을 배려하면 애정이 더욱 깊어집니다.",
-        "새로운 인연에게서 긍정적인 인상을 남길 수 있습니다."
-    ];
-
-    const luckyColors = ["파란색", "빨간색", "노란색", "흰색", "검은색", "보라색", "초록색"];
-    const luckyNumbers = [3, 7, 8, 12, 18, 21, 33, 77];
-
-    return {
-        score,
-        dateStr: today(),
-        userName: info.name || "사용자",
-        dayPillar: `${myDayGan}일간 / ${todayGan}${todayJi}일진`,
-        summary: generalTexts[seed % generalTexts.length],
-        money: moneyTexts[(seed + 1) % moneyTexts.length],
-        love: loveTexts[(seed + 2) % loveTexts.length],
-        luckyColor: luckyColors[seed % luckyColors.length],
-        luckyNumber: luckyNumbers[seed % luckyNumbers.length]
-    };
-}
-
-function fortuneHTML() {
-    const info = db.userInfo || {};
-    const fortune = calculateDailyFortune();
-
-    const timesOptions = [
-        { val: "unknown", label: "시간 모름 / 미선택" },
-        { val: "0", label: "자시 (23:30 ~ 01:29)" },
-        { val: "2", label: "축시 (01:30 ~ 03:29)" },
-        { val: "4", label: "인시 (03:30 ~ 05:29)" },
-        { val: "6", label: "묘시 (05:30 ~ 07:29)" },
-        { val: "8", label: "진시 (07:30 ~ 09:29)" },
-        { val: "10", label: "사시 (09:30 ~ 11:29)" },
-        { val: "12", label: "오시 (11:30 ~ 13:29)" },
-        { val: "14", label: "미시 (13:30 ~ 15:29)" },
-        { val: "16", label: "신시 (15:30 ~ 17:29)" },
-        { val: "18", label: "유시 (17:30 ~ 19:29)" },
-        { val: "20", label: "술시 (19:30 ~ 21:29)" },
-        { val: "22", label: "해시 (21:30 ~ 23:29)" }
-    ];
-
-    return `
-        <div class="ai-box">
-            <strong>🔮 사주 / 생년월일 정보</strong>
-            <div class="list-sub" style="margin-top:4px;">
-                정보를 등록하면 매일 자동으로 맞춤 운세가 계산됩니다.
-            </div>
-
-            <div class="form-group" style="margin-top:12px;">
-                <label>이름 (선택)</label>
-                <input id="usrName" value="${esc(info.name || '')}" placeholder="예: 홍길동">
-            </div>
-
-            <div class="form-group">
-                <label>양력 / 음력 구분</label>
-                <select id="usrCalendar">
-                    <option value="solar" ${info.calendarType === 'solar' ? 'selected' : ''}>양력 (Solar)</option>
-                    <option value="lunar" ${info.calendarType === 'lunar' ? 'selected' : ''}>음력 (Lunar)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>생년월일</label>
-                <input id="usrBirth" type="date" value="${info.birthDate || ''}">
-            </div>
-
-            <div class="form-group">
-                <label>태어난 시간 (선택)</label>
-                <select id="usrTime">
-                    ${timesOptions.map(t => `<option value="${t.val}" ${info.birthTime === t.val ? 'selected' : ''}>${t.label}</option>`).join("")}
-                </select>
-            </div>
-
-            <button class="btn btn-purple" onclick="saveUserInfo()">
-                사주 정보 저장 및 운세 보기
-            </button>
-        </div>
-
-        ${fortune ? `
-            <div class="section-title" style="padding:0;margin-top:20px">
-                ✨ ${fortune.userName}님의 오늘 운세 (${fortune.dateStr})
-            </div>
-
-            <div class="ai-box">
-                <div class="ai-big-score">
-                    <div class="number">${fortune.score}</div>
-                    <div class="text">오늘의 운세 지수 (${fortune.dayPillar})</div>
-                </div>
-            </div>
-
-            <div class="analysis-item">
-                <strong>🌟 총운</strong><br>
-                ${fortune.summary}
-            </div>
-
-            <div class="analysis-item">
-                <strong>💰 금전/재물운</strong><br>
-                ${fortune.money}
-            </div>
-
-            <div class="analysis-item">
-                <strong>❤️ 대인/애정운</strong><br>
-                ${fortune.love}
-            </div>
-
-            <div class="analysis-item">
-                <strong>🍀 행운의 요소</strong><br>
-                행운의 색상: <b>${fortune.luckyColor}</b> / 행운의 숫자: <b>${fortune.luckyNumber}</b>
-            </div>
-        ` : `
-            <div class="empty">생년월일을 입력하신 후 저장하면 운세가 나타납니다.</div>
-        `}
-    `;
-}
-
-function saveUserInfo() {
-    const birthDate = document.getElementById("usrBirth").value;
-    if (!birthDate) return toast("생년월일을 선택해주세요");
-
-    db.userInfo = {
-        name: document.getElementById("usrName").value.trim(),
-        calendarType: document.getElementById("usrCalendar").value,
-        birthDate: birthDate,
-        birthTime: document.getElementById("usrTime").value
-    };
-
-    saveDB();
-    toast("사주 정보가 저장되었습니다");
-    openModal("fortune");
-}
-
-/* =========================================================
-   2. EXPENSE MODULE (현금/일시불/할부 완전 복원)
+   1. EXPENSE MODULE
 ========================================================= */
 
 function expenseHTML(prefillValue = null){
@@ -1240,7 +1036,7 @@ function deleteExpense(i){
 }
 
 /* =========================================================
-   3. TODO MODULE (할 일 관리 완전 복원)
+   2. TODO MODULE
 ========================================================= */
 
 function todoHTML(){
@@ -1291,7 +1087,7 @@ function deleteTodo(i){
 }
 
 /* =========================================================
-   4. SCHEDULE MODULE (일정 관리 완전 복원)
+   3. SCHEDULE MODULE
 ========================================================= */
 
 function scheduleHTML(){
@@ -1342,7 +1138,7 @@ function deleteSchedule(id){
 }
 
 /* =========================================================
-   5. GOAL MODULE (목표 관리 완전 복원)
+   4. GOAL MODULE
 ========================================================= */
 
 function goalHTML(){
@@ -1397,7 +1193,7 @@ function deleteGoal(i){
 }
 
 /* =========================================================
-   6. SHOPPING MODULE (장보기 관리 완전 복원)
+   5. SHOPPING MODULE
 ========================================================= */
 
 function shoppingHTML(){
@@ -1448,7 +1244,7 @@ function deleteShopping(i){
 }
 
 /* =========================================================
-   7. MEMO MODULE (메모 관리 완전 복원)
+   6. MEMO MODULE
 ========================================================= */
 
 function memoHTML(){
@@ -1493,7 +1289,7 @@ function deleteMemo(id){
 }
 
 /* =========================================================
-   8. ITEM MODULE (물건 관리 완전 복원)
+   7. ITEM MODULE
 ========================================================= */
 
 function itemHTML(){
@@ -1549,7 +1345,7 @@ function deleteItem(i){
 }
 
 /* =========================================================
-   9. CALCULATOR MODULE (가계부 연동 완전 복원)
+   8. CALCULATOR MODULE
 ========================================================= */
 
 function calculatorHTML() {
@@ -1654,7 +1450,7 @@ function sendCalcToExpense(){
 }
 
 /* =========================================================
-   10. AI ENGINE & SCREEN (완전 복원)
+   9. AI ENGINE & SCREEN
 ========================================================= */
 
 function AIAnalyze(){
@@ -1773,7 +1569,7 @@ function openAI(){
 
         <div class="section-title" style="padding:0">💡 AI 생활 제안</div>
         <div class="ai-box">
-            ${result.advice.length ? result.advice.map(x=>`<div class="analysis-item">💡 ${x}</div>`).join("") : `<div class="analysis-item good">현재 생활 패턴이 매우 안정적입니다.</div>`}
+            ${result.advice.length ? result.advice.map(x=>`<div class="analysis-item">💡 ${x}</div>`).join("") : `<div class="analysis-item">현재 생활 패턴이 매우 안정적입니다.</div>`}
         </div>
 
         <button class="btn btn-blue" onclick="openAI()">🔄 다시 분석</button>
@@ -1781,7 +1577,7 @@ function openAI(){
 }
 
 /* =========================================================
-   SETTINGS & BACKUP
+   10. SETTINGS & BACKUP
 ========================================================= */
 
 function settingsHTML(){
@@ -1793,7 +1589,6 @@ function settingsHTML(){
             </div>
         </div>
 
-        <button class="btn btn-purple" onclick="openModal('fortune')">🔮 사주 / 생년월일 설정 수정</button>
         <button class="btn btn-blue" onclick="exportData()">📤 데이터 백업</button>
         <button class="btn btn-gray" onclick="document.getElementById('importFile').click()">📥 데이터 복원</button>
         <input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
