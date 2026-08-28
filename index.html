@@ -2,1681 +2,234 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>MY LIFE OS</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MY LIFE OS — Meta Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=Noto+Sans+KR:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-    /* 밝은 테마 컬러 팔레트 */
-    --bg:#f4f7fc;
-    --card:#ffffff;
-    --card2:#f8fafc;
-    --line:#e2e8f0;
-    --text:#1e293b;
-    --sub:#64748b;
-    --blue:#2563eb;
-    --green:#16a34a;
-    --yellow:#d97706;
-    --red:#dc2626;
-    --purple:#7c3aed;
-    --cyan:#0891b2;
+ --bg:#f6f7f9;
+ --card:#ffffff;
+ --line:#e4e6eb;
+ --text:#050505;
+ --sub:#65676b;
+ --blue:#0866ff;
+ --blue-soft:#f0f6ff;
+ --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.06);
+ --shadow-hover:0 4px 12px rgba(0,0,0,.08),0 16px 40px rgba(0,0,0,.08);
 }
-
-body{
-    margin:0;
-    background:
-        radial-gradient(circle at top right,#e0f2fe 0,#f4f7fc 45%),
-        var(--bg);
-    color:var(--text);
-    font-family:
-        -apple-system,BlinkMacSystemFont,
-        "Noto Sans KR",sans-serif;
-    user-select: none;
-}
-
-button,input,textarea,select{
-    font:inherit;
-}
-
-button{
-    border:0;
-    cursor:pointer;
-}
-
-.app{
-    max-width:720px;
-    margin:auto;
-    min-height:100vh;
-    padding-bottom:90px;
-}
-
-/* HEADER */
-
-.header{
-    padding:24px 18px 10px;
-}
-
-.logo{
-    font-size:25px;
-    font-weight:900;
-    color:#0f172a;
-}
-
-.logo span{
-    color:var(--blue);
-}
-
-.subtitle{
-    color:var(--sub);
-    font-size:13px;
-    margin-top:5px;
-}
-
-/* SECTION TITLE */
-
-.section-title{
-    padding:0 17px;
-    margin:18px 0 10px;
-    font-size:15px;
-    font-weight:800;
-    color:#0f172a;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* DASHBOARD BOARD (TARGET ZONE) */
-
-.dash-board {
-    margin: 0 15px 15px;
-    padding: 12px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.6);
-    min-height: 110px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: background 0.2s, border-color 0.2s;
-}
-
-.dash-board.drag-over {
-    background: #e0f2fe;
-    border-color: var(--blue);
-}
-
-.dash-board-empty {
-    text-align: center;
-    color: #94a3b8;
-    font-size: 13px;
-    padding: 25px 10px;
-    line-height: 1.5;
-}
-
-/* DRAGGABLE DASHBOARD CARDS */
-
-.drag-card {
-    position: relative;
-    border-radius: 20px;
-    cursor: grab;
-    transition: transform 0.15s, box-shadow 0.15s;
-    touch-action: manipulation;
-}
-
-.drag-card:active {
-    cursor: grabbing;
-    transform: scale(0.98);
-}
-
-.drag-card.dragging {
-    opacity: 0.4;
-}
-
-.card-remove-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    color: #ffffff;
-    border-radius: 10px;
-    padding: 4px 8px;
-    font-size: 11px;
-    font-weight: bold;
-    z-index: 5;
-}
-
-/* CARD STYLES */
-
-.card-ai {
-    padding: 20px;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
-}
-
-.card-expense-dash {
-    padding: 18px;
-    background: linear-gradient(135deg, #059669, #10b981);
-    color: #ffffff;
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
-}
-
-.card-todo-dash {
-    padding: 18px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    color: var(--text);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-}
-
-.card-generic-dash {
-    padding: 18px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    color: var(--text);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-}
-
-.greeting{ color:#bfdbfe; font-size:12px; }
-.today{ font-size:20px; font-weight:900; margin-top:2px; }
-.ai-mini{
-    margin-top:12px;
-    padding:12px;
-    border-radius:15px;
-    background:rgba(255, 255, 255, 0.15);
-    backdrop-filter:blur(10px);
-}
-.ai-title{ display:flex; justify-content:space-between; align-items:center; }
-.ai-score{ font-size:22px; font-weight:900; }
-.ai-summary{ margin-top:6px; color:#eff6ff; font-size:12px; line-height:1.5; }
-
-/* MENU */
-
-.menu{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    padding:0 15px;
-}
-
-.menu .menu-item-btn {
-    position: relative;
-    min-height:92px;
-    border-radius:18px;
-    background:var(--card);
-    border:1px solid var(--line);
-    color:var(--text);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    gap:6px;
-    transition:.15s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    cursor: grab;
-    touch-action: manipulation;
-}
-
-.menu .menu-item-btn:active{
-    transform:scale(.96);
-    background:#f1f5f9;
-}
-
-.menu .menu-item-btn.is-placed {
-    border: 2px solid var(--blue);
-    background: #f0f7ff;
-}
-
-.menu .icon{ font-size:26px; }
-.menu .label{ font-size:12px; font-weight:600; }
-
-.menu-pin-badge {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    font-size: 10px;
-    background: var(--blue);
-    color: white;
-    padding: 2px 5px;
-    border-radius: 6px;
-    font-weight: bold;
-}
-
-.menu-add-btn {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    font-size: 11px;
-    background: #e2e8f0;
-    color: var(--sub);
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-/* STAT CARD */
-
-.card{
-    margin:0 15px 13px;
-    padding:17px;
-    border-radius:20px;
-    background:var(--card);
-    border:1px solid var(--line);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-}
-
-.stat-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-}
-
-.stat{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    padding:15px;
-    border-radius:16px;
-}
-
-.stat .name{ color:var(--sub); font-size:12px; }
-.stat .value{ font-size:22px; font-weight:900; margin-top:5px; color:#0f172a; }
-
-.row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.progress{
-    height:9px;
-    background:#e2e8f0;
-    border-radius:20px;
-    overflow:hidden;
-    margin-top:9px;
-}
-
-.progress div{
-    height:100%;
-    background:linear-gradient(90deg,#2563eb,#16a34a);
-    border-radius:20px;
-}
-
-/* MODAL & OTHERS */
-
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:100;
-    background:rgba(15, 23, 42, 0.4);
-    backdrop-filter:blur(6px);
-    padding:15px;
-    overflow:auto;
-}
-
-.modal.show{ display:block; }
-
-.modal-box{
-    max-width:700px;
-    margin:30px auto;
-    background:#ffffff;
-    border:1px solid #e2e8f0;
-    border-radius:24px;
-    padding:20px;
-    box-shadow:0 20px 50px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-}
-
-.modal-header h2{
-    margin:0;
-    font-size:20px;
-    color:#0f172a;
-}
-
-.close{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    background:#f1f5f9;
-    color:#64748b;
-    font-size:20px;
-}
-
-input,textarea,select{
-    width:100%;
-    border:1px solid #cbd5e1;
-    background:#ffffff;
-    color:#0f172a;
-    padding:13px;
-    border-radius:13px;
-    outline:none;
-}
-
-input:focus, textarea:focus, select:focus{
-    border-color:var(--blue);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-textarea{
-    min-height:100px;
-    resize:vertical;
-}
-
-.form-group{ margin-bottom:12px; }
-.form-group label{ display:block; color:var(--sub); font-size:12px; margin-bottom:6px; font-weight:600; }
-
-.btn{
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    color:white;
-    font-weight:800;
-    margin-top:7px;
-}
-
-.btn-blue{ background:linear-gradient(135deg,#2563eb,#3b82f6); }
-.btn-purple{ background:linear-gradient(135deg,#7c3aed,#8b5cf6); }
-.btn-green{ background:linear-gradient(135deg,#16a34a,#22c55e); }
-.btn-gray{ background:#64748b; }
-.btn-red{ background:#dc2626; }
-
-.ai-box{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:20px;
-    padding:18px;
-    margin-bottom:12px;
-}
-
-.ai-big-score{
-    text-align:center;
-    padding:10px;
-}
-
-.ai-big-score .number{
-    font-size:58px;
-    font-weight:900;
-    color:var(--purple);
-}
-
-.ai-big-score .text{
-    color:var(--sub);
-}
-
-.analysis-item{
-    padding:13px;
-    margin-top:9px;
-    border-radius:14px;
-    background:#ffffff;
-    border:1px solid #e2e8f0;
-    line-height:1.6;
-    font-size:13px;
-    color:var(--text);
-}
-
-.analysis-item strong{ color:#0f172a; }
-
-.list-item{ display:flex; align-items:center; gap:10px; padding:13px 0; border-bottom:1px solid #e2e8f0; }
-.list-item:last-child{ border-bottom:0; }
-.list-main{ flex:1; }
-.list-title{ font-weight:700; color:#0f172a; }
-.list-sub{ color:var(--sub); font-size:11px; margin-top:3px; }
-.delete{ width:34px; height:34px; border-radius:10px; background:#fef2f2; color:#dc2626; }
-
-.bottom{
-    position:fixed; bottom:0; left:0; right:0; height:68px; z-index:50;
-    background:rgba(255, 255, 255, 0.9); backdrop-filter:blur(15px);
-    border-top:1px solid #e2e8f0; display:flex; justify-content:center;
-}
-
-.bottom-inner{ width:100%; max-width:720px; display:grid; grid-template-columns:repeat(4,1fr); }
-.bottom button{ background:none; color:#64748b; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
-.bottom button.active{ color:var(--blue); }
-.bottom span:first-child{ font-size:20px; }
-.bottom span:last-child{ font-size:10px; font-weight:600; }
-
-.toast{
-    position:fixed; left:50%; bottom:85px; transform:translateX(-50%) translateY(20px);
-    background:#0f172a; color:white; padding:12px 18px; border-radius:30px; opacity:0;
-    pointer-events:none; transition:.25s; z-index:300; white-space:nowrap;
-    box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-.empty{ text-align:center; color:#94a3b8; padding:25px 10px; font-size:13px; }
-
-/* CALCULATOR CSS */
-.calc-screen {
-    background: #0f172a;
-    color: #ffffff;
-    text-align: right;
-    padding: 16px 20px;
-    border-radius: 16px;
-    margin-bottom: 12px;
-    word-break: break-all;
-}
-
-.calc-formula {
-    font-size: 13px;
-    color: #94a3b8;
-    min-height: 18px;
-}
-
-.calc-value {
-    font-size: 32px;
-    font-weight: 800;
-    margin-top: 4px;
-}
-
-.calc-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-
-.calc-btn {
-    height: 52px;
-    border-radius: 14px;
-    font-size: 18px;
-    font-weight: 700;
-    background: #f1f5f9;
-    color: #0f172a;
-}
-
-.calc-btn:active {
-    background: #e2e8f0;
-    transform: scale(0.96);
-}
-
-.calc-btn.op { background: #e0f2fe; color: #0284c7; }
-.calc-btn.action { background: #fef2f2; color: #dc2626; }
-.calc-btn.equal { background: #2563eb; color: #ffffff; }
-
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Noto Sans KR",-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;user-select:none}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer}
+.app{max-width:720px;margin:auto;min-height:100vh;padding-bottom:96px}
+.header{padding:22px 20px 14px;display:flex;justify-content:space-between;align-items:flex-end}
+.logo{font-size:24px;font-weight:900;letter-spacing:-.8px}
+.logo span{color:var(--blue)}
+.subtitle{color:var(--sub);font-size:13px;margin-top:4px;font-weight:500}
+.date-pill{background:var(--card);border:1px solid var(--line);padding:7px 12px;border-radius:100px;font-size:12px;font-weight:700;color:var(--sub);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.section-title{padding:0 20px;margin:22px 0 12px;font-size:14px;font-weight:800;letter-spacing:-.2px;display:flex;justify-content:space-between;align-items:center}
+.section-title small{font-weight:600;color:var(--sub);font-size:11px}
+.dash-board{margin:0 16px 18px;padding:14px;border:1.5px dashed #d0d7de;border-radius:24px;background:rgba(255,255,255,.7);backdrop-filter:blur(20px);min-height:112px;display:flex;flex-direction:column;gap:12px;transition:.2s}
+.dash-board.drag-over{background:var(--blue-soft);border-color:var(--blue);border-style:solid}
+.dash-board-empty{text-align:center;color:#8a8d91;font-size:13px;padding:26px 10px;line-height:1.6;font-weight:500}
+.dash-board-empty b{color:var(--text)}
+.drag-card{position:relative;border-radius:22px;cursor:grab;transition:transform .18s,box-shadow .18s}
+.drag-card:active{cursor:grabbing;transform:scale(.98)}
+.drag-card.dragging{opacity:.4}
+.card-remove-btn{position:absolute;top:10px;right:10px;background:#f0f2f5;color:#65676b;border-radius:100px;padding:5px 10px;font-size:11px;font-weight:700;z-index:5}
+.card-remove-btn:hover{background:#fee2e2;color:#dc2626}
+.card-ai{padding:20px;background:radial-gradient(120% 120% at 10% 0%,#3b82f6 0%,#0866ff 55%,#0047d1 100%);color:#fff;box-shadow:0 8px 28px rgba(8,102,255,.28)}
+.card-expense-dash{padding:18px;background:radial-gradient(120% 120% at 0% 0%,#10b981 0%,#059669 100%);color:#fff;box-shadow:0 8px 28px rgba(5,150,105,.24)}
+.card-todo-dash,.card-generic-dash{padding:18px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.greeting{color:#dbeafe;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.today{font-size:19px;font-weight:800;margin-top:4px;letter-spacing:-.4px}
+.ai-mini{margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.16);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18)}
+.ai-title{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px}
+.ai-score{font-size:22px;font-weight:900}
+.ai-summary{margin-top:6px;color:#eff6ff;font-size:12px;line-height:1.5;opacity:.95}
+.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px}
+.menu-item-btn{position:relative;min-height:108px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--text);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,.04);cursor:grab}
+.menu-item-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.menu-item-btn:active{transform:scale(.97)}
+.menu-item-btn.is-placed{border:2px solid var(--blue);background:var(--blue-soft)}
+.icon-wrap{width:48px;height:48px;border-radius:14px;display:grid;place-items:center}
+.icon-wrap svg{width:24px;height:24px}
+.label{font-size:12.5px;font-weight:700;letter-spacing:-.2px}
+.menu-pin-badge{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:100px;background:var(--blue);color:#fff;display:grid;place-items:center}
+.menu-add-btn{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:100px;background:#f0f2f5;color:#65676b;display:grid;place-items:center}
+.card{margin:0 16px 14px;padding:18px;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#f6f7f9;border:1px solid #eef0f3;padding:14px 15px;border-radius:16px}
+.stat .name{color:var(--sub);font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.stat .value{font-size:21px;font-weight:900;margin-top:6px;letter-spacing:-.5px}
+.row{display:flex;justify-content:space-between;align-items:center}
+.progress{height:8px;background:#e4e6eb;border-radius:100px;overflow:hidden;margin-top:10px}
+.progress div{height:100%;background:linear-gradient(90deg,var(--blue),#00c6ff);border-radius:100px}
+.modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.12);backdrop-filter:blur(12px);padding:14px;overflow:auto}
+.modal.show{display:block}
+.modal-box{max-width:700px;margin:28px auto;background:#fff;border:1px solid #e4e6eb;border-radius:28px;padding:20px;box-shadow:0 24px 64px rgba(0,0,0,.12)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-header h2{margin:0;font-size:19px;font-weight:800;letter-spacing:-.4px}
+.close{width:36px;height:36px;border-radius:100px;background:#f0f2f5;color:#65676b;font-size:20px;display:grid;place-items:center}
+input,textarea,select{width:100%;border:1.5px solid #d8dadf;background:#fff;color:var(--text);padding:13px 14px;border-radius:14px;outline:none;transition:.15s;font-weight:500}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(8,102,255,.12)}
+textarea{min-height:100px;resize:vertical}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;color:var(--sub);font-size:11px;margin-bottom:6px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.btn{width:100%;padding:14px;border-radius:14px;color:#fff;font-weight:800;letter-spacing:-.2px;margin-top:8px}
+.btn-blue{background:var(--blue)} .btn-green{background:#00a86b} .btn-purple{background:#7c3aed} .btn-gray{background:#65676b} .btn-red{background:#e11d48}
+.ai-box{background:#f6f7f9;border:1px solid #eef0f3;border-radius:20px;padding:16px;margin-bottom:12px}
+.ai-big-score{text-align:center;padding:8px}
+.ai-big-score .number{font-size:56px;font-weight:900;letter-spacing:-2px;color:var(--blue)}
+.ai-big-score .text{color:var(--sub);font-weight:600}
+.analysis-item{padding:13px 14px;margin-top:10px;border-radius:14px;background:#fff;border:1px solid #e4e6eb;line-height:1.6;font-size:13px}
+.list-item{display:flex;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid #eef0f3}
+.list-item:last-child{border-bottom:0}
+.list-main{flex:1}
+.list-title{font-weight:700}
+.list-sub{color:var(--sub);font-size:11px;margin-top:3px;font-weight:500}
+.delete{width:32px;height:32px;border-radius:10px;background:#fef2f2;color:#e11d48;display:grid;place-items:center}
+.calc-screen{background:#111827;color:#fff;text-align:right;padding:18px 20px;border-radius:18px;margin-bottom:12px}
+.calc-formula{font-size:12px;color:#9ca3af;min-height:16px}
+.calc-value{font-size:32px;font-weight:800;margin-top:4px;letter-spacing:-.5px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-btn{height:54px;border-radius:14px;font-size:18px;font-weight:700;background:#f0f2f5;color:#111827}
+.calc-btn.op{background:#e7f0ff;color:var(--blue)} .calc-btn.action{background:#fee2e2;color:#e11d48} .calc-btn.equal{background:var(--blue);color:#fff}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:72px;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-top:1px solid #e4e6eb;display:flex;justify-content:center}
+.bottom-inner{width:100%;max-width:720px;display:grid;grid-template-columns:repeat(4,1fr)}
+.bottom button{background:none;color:#8a8d91;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.bottom button.active{color:var(--blue)}
+.bottom .ico{width:24px;height:24px}
+.bottom span:last-child{font-size:10px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(16px);background:#111827;color:#fff;padding:12px 18px;border-radius:100px;opacity:0;pointer-events:none;transition:.28s;z-index:300;white-space:nowrap;font-size:13px;font-weight:600;box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;color:#8a8d91;padding:26px 10px;font-size:13px;font-weight:500}
 </style>
 </head>
-
 <body>
-
 <div class="app">
-
-    <header class="header">
-        <div class="logo">MY LIFE <span>OS</span></div>
-        <div class="subtitle">나만의 생활 관리 · 분석 플랫폼</div>
-    </header>
-
-    <div class="section-title">
-        <span>📌 내 대시보드 (상단 공간)</span>
-        <span style="font-size:11px; font-weight:normal; color:var(--sub);">아래 메뉴에서 끌어다 놓으세요</span>
-    </div>
-
-    <!-- UPPER DASHBOARD BOARD -->
-    <div class="dash-board" id="dashBoard" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-        <!-- JS로 동적 배치됨 -->
-    </div>
-
-    <div class="section-title">
-        <span>빠른 메뉴</span>
-        <span style="font-size:11px; font-weight:normal; color:var(--sub);">아이콘을 꾹 눌러 상단으로 드래그!</span>
-    </div>
-
-    <div class="menu" id="quickMenu">
-        <!-- JS로 동적 배치됨 -->
-    </div>
-
-    <div class="section-title">오늘의 현황</div>
-
-    <div class="card">
-        <div class="stat-grid">
-            <div class="stat"><div class="name">이번 달 청구 지출</div><div class="value" id="expenseTotal">0원</div></div>
-            <div class="stat"><div class="name">완료한 할 일</div><div class="value" id="todoDone">0</div></div>
-            <div class="stat"><div class="name">진행 목표</div><div class="value" id="goalProgress">0%</div></div>
-            <div class="stat"><div class="name">메모</div><div class="value" id="memoCount">0</div></div>
-        </div>
-    </div>
-
-    <div class="section-title">오늘의 할 일</div>
-    <div class="card" id="todayTodo">
-        <div class="empty">등록된 할 일이 없습니다.</div>
-    </div>
-
+<header class="header">
+<div><div class="logo">MY LIFE <span>OS</span></div><div class="subtitle">나만의 생활 관리 · 분석 플랫폼</div></div>
+<div class="date-pill" id="datePill"></div>
+</header>
+<div class="section-title"><span>📌 내 대시보드</span><small>끌어서 배치 · + 로 추가</small></div>
+<div class="dash-board" id="dashBoard" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+<div class="section-title"><span>빠른 메뉴</span><small>아이콘을 꾹 눌러 상단으로 드래그</small></div>
+<div class="menu" id="quickMenu"></div>
+<div class="section-title">오늘의 현황</div>
+<div class="card">
+<div class="stat-grid">
+<div class="stat"><div class="name">이번 달 청구 지출</div><div class="value" id="expenseTotal">0원</div></div>
+<div class="stat"><div class="name">완료한 할 일</div><div class="value" id="todoDone">0</div></div>
+<div class="stat"><div class="name">진행 목표</div><div class="value" id="goalProgress">0%</div></div>
+<div class="stat"><div class="name">메모</div><div class="value" id="memoCount">0</div></div>
 </div>
-
-<!-- BOTTOM NAV -->
-<div class="bottom">
-    <div class="bottom-inner">
-        <button class="active" onclick="scrollTopPage()"><span>🏠</span><span>홈</span></button>
-        <button onclick="openAI()"><span>🤖</span><span>AI</span></button>
-        <button onclick="openModal('memo')"><span>📝</span><span>메모</span></button>
-        <button onclick="openModal('settings')"><span>⚙️</span><span>설정</span></button>
-    </div>
 </div>
-
-<!-- MODAL -->
-<div class="modal" id="modal" onclick="handleModalBgClick(event)">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h2 id="modalTitle">메뉴</h2>
-            <button class="close" onclick="closeModal()">×</button>
-        </div>
-        <div id="modalContent"></div>
-    </div>
+<div class="section-title">오늘의 할 일</div>
+<div class="card" id="todayTodo"><div class="empty">등록된 할 일이 없습니다.</div></div>
 </div>
-
+<div class="bottom"><div class="bottom-inner">
+<button class="active" onclick="scrollTopPage()"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>홈</span></button>
+<button onclick="openAI()"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4Z"/><path d="M8 10h8"/><path d="M8 14h8"/><path d="M9 18h6"/></svg></span><span>AI</span></button>
+<button onclick="openModal('memo')"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span>메모</span></button>
+<button onclick="openModal('settings')"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 2 2 0 0 1-2 0 1.65 1.65 0 0 0-1-.6 1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 8.6 15a1.65 1.65 0 0 0-.6-1 2 2 0 0 1 0-2c.18-.36.42-.68.6-1A1.65 1.65 0 0 0 8.27 9.18l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 12.9 6.6a1.65 1.65 0 0 0 1-.6 2 2 0 0 1 2 0c.36.18.68.42 1 .6a1.65 1.65 0 0 0 1.82.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 15.4 11.4a1.65 1.65 0 0 0 .6 1 2 2 0 0 1 0 2c-.18.36-.42.68-.6 1Z"/></svg></span><span>설정</span></button>
+</div></div>
+<div class="modal" id="modal" onclick="handleModalBgClick(event)"><div class="modal-box"><div class="modal-header"><h2 id="modalTitle">메뉴</h2><button class="close" onclick="closeModal()">×</button></div><div id="modalContent"></div></div></div>
 <div class="toast" id="toast"></div>
-
 <script>
-
-/* =========================================================
-   MY LIFE OS
-   OFFLINE DATA ENGINE
-========================================================= */
-
-const DB_KEY = "MY_LIFE_OS_DATABASE_V1";
-
-let db = loadDB();
-let calcDisplay = "0";
-let calcLastValue = 0;
-let draggedCardId = null;
-
-// 마스터 메뉴 정의 (운세 삭제)
-const MENU_LIST = [
-    { id: "ai", icon: "🤖", label: "AI 분석", action: openAI },
-    { id: "expense", icon: "💰", label: "가계부", action: () => openModal('expense') },
-    { id: "todo", icon: "✅", label: "할 일", action: () => openModal('todo') },
-    { id: "schedule", icon: "📅", label: "일정", action: () => openModal('schedule') },
-    { id: "goal", icon: "🎯", label: "목표", action: () => openModal('goal') },
-    { id: "shopping", icon: "🛒", label: "장보기", action: () => openModal('shopping') },
-    { id: "memo", icon: "📝", label: "메모", action: () => openModal('memo') },
-    { id: "items", icon: "📦", label: "물건관리", action: () => openModal('items') },
-    { id: "calculator", icon: "🧮", label: "계산기", action: () => openModal('calculator') }
+const DB_KEY="MY_LIFE_OS_DATABASE_V1";
+let db=loadDB(); let calcDisplay="0"; let calcLastValue=0; let draggedCardId=null;
+const ICONS={
+ ai:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063A2 2 0 0 0 14.063 15.5l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v5"/><path d="M5 19H2"/></svg>`,
+ expense:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-9"/></svg>`,
+ todo:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+ schedule:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+ goal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+ shopping:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+ memo:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+ items:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+ calculator:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>`
+};
+const COLORS={
+ ai:'linear-gradient(135deg,#e0f2fe,#dbeafe)',expense:'linear-gradient(135deg,#dcfce7,#d1fae5)',todo:'linear-gradient(135deg,#fef9c3,#fef08a)',schedule:'linear-gradient(135deg,#e0e7ff,#c7d2fe)',goal:'linear-gradient(135deg,#f3e8ff,#e9d5ff)',shopping:'linear-gradient(135deg,#ffedd5,#fed7aa)',memo:'linear-gradient(135deg,#f3f4f6,#e5e7eb)',items:'linear-gradient(135deg,#fce7f3,#fbcfe8)',calculator:'linear-gradient(135deg,#f1f5f9,#e2e8f0)'
+};
+const MENU_LIST=[
+ {id:"ai",label:"AI 분석",action:openAI},
+ {id:"expense",label:"가계부",action:()=>openModal('expense')},
+ {id:"todo",label:"할 일",action:()=>openModal('todo')},
+ {id:"schedule",label:"일정",action:()=>openModal('schedule')},
+ {id:"goal",label:"목표",action:()=>openModal('goal')},
+ {id:"shopping",label:"장보기",action:()=>openModal('shopping')},
+ {id:"memo",label:"메모",action:()=>openModal('memo')},
+ {id:"items",label:"물건관리",action:()=>openModal('items')},
+ {id:"calculator",label:"계산기",action:()=>openModal('calculator')}
 ];
-
-function defaultDB(){
-    return {
-        placedCardIds: ["ai", "expense"],
-        expenses:[], todos:[], schedules:[], goals:[], shopping:[], memos:[], items:[]
-    };
-}
-
-function loadDB(){
-    try{
-        const data = localStorage.getItem(DB_KEY);
-        if(data){
-            const parsed = JSON.parse(data);
-            if (!parsed.placedCardIds) {
-                parsed.placedCardIds = ["ai", "expense"];
-            }
-            // 기존 데이터에 잔재하는 fortune ID 제거
-            parsed.placedCardIds = parsed.placedCardIds.filter(id => id !== 'fortune');
-            return { ...defaultDB(), ...parsed };
-        }
-    }catch(e){}
-    return defaultDB();
-}
-
-function saveDB(){
-    localStorage.setItem(DB_KEY, JSON.stringify(db));
-    updateDashboard();
-}
-
-/* =========================================================
-   UTIL
-========================================================= */
-
-function money(n){ return Number(n || 0).toLocaleString("ko-KR") + "원"; }
-function today(){ return new Date().toISOString().slice(0,10); }
-function month(){ return today().slice(0,7); }
-function esc(str){ return String(str ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'", "&#039;"); }
-function toast(text){ const t=document.getElementById("toast"); t.textContent=text; t.classList.add("show"); setTimeout(()=>{ t.classList.remove("show"); },1800); }
-function getTodayText() { const d = new Date(); const days = ["일","월","화","수","목","금","토"]; return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`; }
-
-// 월별 지출 계산 (할부 포함)
-function calculateMonthlyExpense(targetMonth) {
-    const [tYear, tMonth] = targetMonth.split('-').map(Number);
-    let total = 0;
-
-    db.expenses.forEach(x => {
-        if (!x.date) return;
-        
-        const payType = x.payType || "cash";
-        const [eYear, eMonth] = x.date.slice(0, 7).split('-').map(Number);
-        const monthDiff = (tYear - eYear) * 12 + (tMonth - eMonth);
-
-        if (payType === "installment") {
-            const months = Number(x.installMonths) || 1;
-            if (monthDiff >= 0 && monthDiff < months) {
-                total += Math.round(Number(x.amount) / months);
-            }
-        } else {
-            if (monthDiff === 0) {
-                total += Number(x.amount);
-            }
-        }
-    });
-
-    return total;
-}
-
-/* =========================================================
-   DRAG AND DROP HANDLERS
-========================================================= */
-
-function handleDragStart(e, id) {
-    draggedCardId = id;
-    e.target.classList.add("dragging");
-}
-
-function handleDragEnd(e) {
-    e.target.classList.remove("dragging");
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    document.getElementById("dashBoard").classList.add("drag-over");
-}
-
-function handleDragLeave(e) {
-    document.getElementById("dashBoard").classList.remove("drag-over");
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    document.getElementById("dashBoard").classList.remove("drag-over");
-
-    if (!draggedCardId) return;
-
-    if (!db.placedCardIds.includes(draggedCardId)) {
-        db.placedCardIds.push(draggedCardId);
-        saveDB();
-        toast("상단 대시보드에 배치되었습니다");
-    }
-
-    draggedCardId = null;
-}
-
-function togglePlaceMenu(id, e) {
-    if (e) e.stopPropagation();
-    if (db.placedCardIds.includes(id)) {
-        removeCard(id, e);
-    } else {
-        placeCard(id);
-    }
-}
-
-function placeCard(id) {
-    if (!db.placedCardIds.includes(id)) {
-        db.placedCardIds.push(id);
-        saveDB();
-        toast("상단 대시보드에 배치되었습니다");
-    }
-}
-
-function removeCard(id, e) {
-    if (e) e.stopPropagation();
-    db.placedCardIds = db.placedCardIds.filter(cId => cId !== id);
-    saveDB();
-    toast("대시보드에서 제거되었습니다");
-}
-
-/* =========================================================
-   RENDER DASHBOARD & QUICK MENU
-========================================================= */
-
-function renderQuickMenu() {
-    const menuEl = document.getElementById("quickMenu");
-    menuEl.innerHTML = MENU_LIST.map(item => {
-        const isPlaced = db.placedCardIds.includes(item.id);
-        return `
-            <div class="menu-item-btn ${isPlaced ? 'is-placed' : ''}" 
-                 draggable="true" 
-                 ondragstart="handleDragStart(event, '${item.id}')" 
-                 ondragend="handleDragEnd(event)"
-                 onclick="handleMenuClick('${item.id}')">
-                
-                ${isPlaced 
-                    ? `<span class="menu-pin-badge">📌 배치됨</span>` 
-                    : `<span class="menu-add-btn" onclick="togglePlaceMenu('${item.id}', event)">+</span>`}
-                
-                <div class="icon">${item.icon}</div>
-                <div class="label">${item.label}</div>
-            </div>
-        `;
-    }).join('');
-}
-
-function handleMenuClick(id) {
-    const item = MENU_LIST.find(m => m.id === id);
-    if (item && item.action) {
-        item.action();
-    }
-}
-
-function renderDashCards() {
-    const board = document.getElementById("dashBoard");
-
-    if (db.placedCardIds.length === 0) {
-        board.innerHTML = `
-            <div class="dash-board-empty">
-                <b>상단 대시보드가 비어있습니다.</b><br>
-                아래 [빠른 메뉴]의 아이콘을 끌어올리거나 <b>(+)</b> 버튼을 눌러 배치해보세요!
-            </div>
-        `;
-        return;
-    }
-
-    board.innerHTML = db.placedCardIds.map(id => {
-        if (id === 'ai') return renderAICard();
-        if (id === 'expense') return renderExpenseCard();
-        if (id === 'todo') return renderTodoCard();
-        return renderGenericCard(id);
-    }).join('');
-}
-
-/* CARD TEMPLATES */
-
-function renderAICard() {
-    const ai = AIAnalyze();
-    return `
-        <div class="drag-card card-ai" draggable="true" ondragstart="handleDragStart(event, 'ai')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('ai')">
-            <button class="card-remove-btn" onclick="removeCard('ai', event)">✕ 제거</button>
-            <div class="greeting">오늘의 생활상태 (${getTodayText()})</div>
-            <div class="today">오늘도 좋은 하루입니다.</div>
-            <div class="ai-mini">
-                <div class="ai-title">
-                    <b>🤖 AI 생활지수</b>
-                    <span class="ai-score">${ai.score}점</span>
-                </div>
-                <div class="ai-summary">
-                    ${ai.status} 상태입니다. ${ai.advice[0] ? ai.advice[0] : "기록을 쌓으면 분석이 정교해집니다."}
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function renderExpenseCard() {
-    const currentMonth = month();
-    const monthExpense = calculateMonthlyExpense(currentMonth);
-    return `
-        <div class="drag-card card-expense-dash" draggable="true" ondragstart="handleDragStart(event, 'expense')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('expense')">
-            <button class="card-remove-btn" onclick="removeCard('expense', event)">✕ 제거</button>
-            <div class="row">
-                <div style="font-size:15px; font-weight:800;">📊 이번 달 지출 현황</div>
-                <div style="font-size:18px; font-weight:900;">${money(monthExpense)}</div>
-            </div>
-            <div style="margin-top:8px; font-size:12px; opacity:0.95; color:#e6fffa;">
-                이번 달(${currentMonth.split('-')[1]}월)의 예상 청구 금액입니다.
-            </div>
-        </div>
-    `;
-}
-
-function renderTodoCard() {
-    const todayTodoList = db.todos.filter(x => x.date === today() && !x.done);
-    return `
-        <div class="drag-card card-todo-dash" draggable="true" ondragstart="handleDragStart(event, 'todo')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('todo')">
-            <button class="card-remove-btn" style="background:#cbd5e1; color:#0f172a;" onclick="removeCard('todo', event)">✕ 제거</button>
-            <div class="row">
-                <div style="font-size:15px; font-weight:800; color:#0f172a;">✅ 남은 오늘의 할 일</div>
-                <div style="font-size:18px; font-weight:900; color:var(--blue);">${todayTodoList.length}개</div>
-            </div>
-            <div style="margin-top:6px; font-size:12px; color:var(--sub);">
-                ${todayTodoList.length > 0 ? `• ${esc(todayTodoList[0].text)} ${todayTodoList.length > 1 ? `외 ${todayTodoList.length - 1}개` : ''}` : '오늘 해야 할 일을 모두 마쳤습니다! 🎉'}
-            </div>
-        </div>
-    `;
-}
-
-function renderGenericCard(id) {
-    const item = MENU_LIST.find(m => m.id === id);
-    if (!item) return '';
-    return `
-        <div class="drag-card card-generic-dash" draggable="true" ondragstart="handleDragStart(event, '${id}')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('${id}')">
-            <button class="card-remove-btn" style="background:#cbd5e1; color:#0f172a;" onclick="removeCard('${id}', event)">✕ 제거</button>
-            <div class="row">
-                <div style="font-size:15px; font-weight:800; color:#0f172a;">${item.icon} ${item.label}</div>
-            </div>
-            <div style="margin-top:8px; font-size:12px; color:var(--sub);">
-                클릭하시면 ${item.label} 상세 관리 화면으로 이동합니다.
-            </div>
-        </div>
-    `;
-}
-
-/* =========================================================
-   MODAL CONTROLLER
-========================================================= */
-
-function openModal(type, prefillValue = null){
-    const modal=document.getElementById("modal");
-    const title=document.getElementById("modalTitle");
-    const content=document.getElementById("modalContent");
-
-    if(!modal.classList.contains("show")){ history.pushState({ modalOpen: true }, ""); }
-    modal.classList.add("show");
-
-    if(type==="expense"){ title.textContent="💰 가계부"; content.innerHTML=expenseHTML(prefillValue); }
-    else if(type==="todo"){ title.textContent="✅ 할 일"; content.innerHTML=todoHTML(); }
-    else if(type==="schedule"){ title.textContent="📅 일정"; content.innerHTML=scheduleHTML(); }
-    else if(type==="goal"){ title.textContent="🎯 목표"; content.innerHTML=goalHTML(); }
-    else if(type==="shopping"){ title.textContent="🛒 장보기"; content.innerHTML=shoppingHTML(); }
-    else if(type==="memo"){ title.textContent="📝 메모"; content.innerHTML=memoHTML(); }
-    else if(type==="items"){ title.textContent="📦 물건 관리"; content.innerHTML=itemHTML(); }
-    else if(type==="calculator"){ title.textContent="🧮 계산기"; content.innerHTML=calculatorHTML(); }
-    else if(type==="settings"){ title.textContent="⚙️ 설정 / 데이터"; content.innerHTML=settingsHTML(); }
-}
-
-function closeModal(fromPopstate = false){
-    const modal = document.getElementById("modal");
-    if(modal.classList.contains("show")){
-        modal.classList.remove("show");
-        if(!fromPopstate && history.state && history.state.modalOpen){ history.back(); }
-    }
-}
-
-function handleModalBgClick(e){ if(e.target.id === "modal"){ closeModal(); } }
-window.addEventListener("popstate", function(){ if(document.getElementById("modal").classList.contains("show")){ closeModal(true); } });
-
-/* =========================================================
-   1. EXPENSE MODULE
-========================================================= */
-
-function expenseHTML(prefillValue = null){
-    const list = db.expenses.slice().reverse();
-
-    return `
-        <div class="form-group">
-            <label>금액 (총 금액)</label>
-            <input id="expAmount" type="number"
-                   value="${prefillValue !== null ? prefillValue : ''}"
-                   placeholder="예: 15000">
-        </div>
-
-        <div class="form-group">
-            <label>결제 수단</label>
-            <select id="expPayType" onchange="toggleInstallmentField()">
-                <option value="cash">현금</option>
-                <option value="card_single">카드 (일시불)</option>
-                <option value="installment">카드 (할부)</option>
-            </select>
-        </div>
-
-        <div class="form-group" id="installGroup" style="display:none;">
-            <label>할부 개월 수</label>
-            <input id="expInstallMonths" type="number" min="2" max="36" value="3" placeholder="예: 3">
-        </div>
-
-        <div class="form-group">
-            <label>분류</label>
-            <select id="expCategory">
-                <option>식비</option>
-                <option>교통</option>
-                <option>쇼핑</option>
-                <option>통신</option>
-                <option>주거</option>
-                <option>의료</option>
-                <option>여가</option>
-                <option>기타</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>내용</label>
-            <input id="expMemo" placeholder="예: 점심식사">
-        </div>
-
-        <button class="btn btn-blue" onclick="addExpense()">
-            지출 기록
-        </button>
-
-        <div class="section-title" style="padding:0;margin-top:25px">
-             최근 지출
-        </div>
-
-        ${
-            list.length
-            ? list.slice(0,20).map((x)=>{
-                const origIndex = db.expenses.indexOf(x);
-                const payType = x.payType || "cash";
-                let payBadge = "💵 현금";
-                let amountSub = "";
-
-                if (payType === "card_single") {
-                    payBadge = "💳 카드(일시불)";
-                } else if (payType === "installment") {
-                    const months = x.installMonths || 1;
-                    const monthlyAmt = Math.round(x.amount / months);
-                    payBadge = `💳 카드(${months}개월 할부)`;
-                    amountSub = `<div class="list-sub" style="text-align:right;">월 ${money(monthlyAmt)}</div>`;
-                }
-
-                return `
-                <div class="list-item">
-                    <div class="list-main">
-                        <div class="list-title">
-                            ${esc(x.memo || x.category)}
-                        </div>
-                        <div class="list-sub">
-                            ${x.date} · ${x.category} · ${payBadge}
-                        </div>
-                    </div>
-
-                    <div>
-                        <b>${money(x.amount)}</b>
-                        ${amountSub}
-                    </div>
-
-                    <button class="delete" onclick="deleteExpense(${origIndex})">
-                        ×
-                    </button>
-                </div>
-            `}).join("")
-            : `<div class="empty">아직 지출 기록이 없습니다.</div>`
-        }
-    `;
-}
-
-function toggleInstallmentField() {
-    const payType = document.getElementById("expPayType").value;
-    const installGroup = document.getElementById("installGroup");
-    installGroup.style.display = (payType === "installment") ? "block" : "none";
-}
-
-function addExpense(){
-    const amount = Number(document.getElementById("expAmount").value);
-    const payType = document.getElementById("expPayType").value;
-    let installMonths = 1;
-
-    if(!amount){ return toast("금액을 입력하세요"); }
-
-    if (payType === "installment") {
-        installMonths = Number(document.getElementById("expInstallMonths").value);
-        if (!installMonths || installMonths < 2) {
-            return toast("할부 개월 수를 2개월 이상 입력하세요");
-        }
-    }
-
-    db.expenses.push({
-        amount,
-        payType,
-        installMonths,
-        category: document.getElementById("expCategory").value,
-        memo: document.getElementById("expMemo").value,
-        date: today()
-    });
-
-    saveDB();
-    toast("지출이 기록되었습니다");
-    openModal("expense");
-}
-
-function deleteExpense(i){
-    if(confirm("삭제할까요?")){
-        db.expenses.splice(i,1);
-        saveDB();
-        openModal("expense");
-    }
-}
-
-/* =========================================================
-   2. TODO MODULE
-========================================================= */
-
-function todoHTML(){
-    return `
-        <div class="form-group">
-            <label>할 일</label>
-            <input id="todoInput" placeholder="예: 운동하기">
-        </div>
-
-        <button class="btn btn-green" onclick="addTodo()">추가</button>
-
-        <div style="margin-top:15px">
-        ${
-            db.todos.length
-            ? db.todos.slice().reverse().map((x,i)=>`
-                <div class="list-item">
-                    <input type="checkbox" style="width:22px" ${x.done?"checked":""} onchange="toggleTodo(${db.todos.indexOf(x)})">
-                    <div class="list-main" style="${x.done?'text-decoration:line-through;color:#94a3b8':''}">
-                        ${esc(x.text)}
-                    </div>
-                    <button class="delete" onclick="deleteTodo(${db.todos.indexOf(x)})">×</button>
-                </div>
-            `).join("")
-            : `<div class="empty">할 일이 없습니다.</div>`
-        }
-        </div>
-    `;
-}
-
-function addTodo(){
-    const text=document.getElementById("todoInput").value.trim();
-    if(!text)return;
-    db.todos.push({ text, done:false, date:today() });
-    saveDB();
-    openModal("todo");
-}
-
-function toggleTodo(i){
-    db.todos[i].done=!db.todos[i].done;
-    saveDB();
-    openModal("todo");
-}
-
-function deleteTodo(i){
-    db.todos.splice(i,1);
-    saveDB();
-    openModal("todo");
-}
-
-/* =========================================================
-   3. SCHEDULE MODULE
-========================================================= */
-
-function scheduleHTML(){
-    const list=db.schedules.slice().sort((a,b)=>a.date.localeCompare(b.date));
-    return `
-        <div class="form-group">
-            <label>날짜</label>
-            <input id="schDate" type="date" value="${today()}">
-        </div>
-
-        <div class="form-group">
-            <label>일정</label>
-            <input id="schText" placeholder="예: 병원 예약">
-        </div>
-
-        <button class="btn btn-blue" onclick="addSchedule()">일정 추가</button>
-
-        <div style="margin-top:15px">
-        ${
-            list.length
-            ? list.map(x=>`
-                <div class="list-item">
-                    <div class="list-main">
-                        <div class="list-title">${esc(x.text)}</div>
-                        <div class="list-sub">${x.date}</div>
-                    </div>
-                    <button class="delete" onclick="deleteSchedule('${x.id}')">×</button>
-                </div>
-            `).join("")
-            : `<div class="empty">등록된 일정이 없습니다.</div>`
-        }
-        </div>
-    `;
-}
-
-function addSchedule(){
-    const text=document.getElementById("schText").value.trim();
-    if(!text)return;
-    db.schedules.push({ id:Date.now().toString(), date:document.getElementById("schDate").value, text });
-    saveDB();
-    openModal("schedule");
-}
-
-function deleteSchedule(id){
-    db.schedules=db.schedules.filter(x=>x.id!==id);
-    saveDB();
-    openModal("schedule");
-}
-
-/* =========================================================
-   4. GOAL MODULE
-========================================================= */
-
-function goalHTML(){
-    return `
-        <div class="form-group">
-            <label>목표</label>
-            <input id="goalText" placeholder="예: 100만원 모으기">
-        </div>
-
-        <div class="form-group">
-            <label>현재 진행률 (%)</label>
-            <input id="goalPercent" type="number" min="0" max="100" value="0">
-        </div>
-
-        <button class="btn btn-blue" onclick="addGoal()">목표 추가</button>
-
-        <div style="margin-top:15px">
-        ${
-            db.goals.length
-            ? db.goals.map((x,i)=>`
-                <div class="analysis-item">
-                    <div class="row">
-                        <strong>${esc(x.text)}</strong>
-                        <button class="delete" onclick="deleteGoal(${i})">×</button>
-                    </div>
-                    <div class="progress">
-                        <div style="width:${x.percent}%"></div>
-                    </div>
-                    <div class="list-sub">${x.percent}% 달성</div>
-                </div>
-            `).join("")
-            : `<div class="empty">등록된 목표가 없습니다.</div>`
-        }
-        </div>
-    `;
-}
-
-function addGoal(){
-    const text=document.getElementById("goalText").value.trim();
-    if(!text)return;
-    let percent=Number(document.getElementById("goalPercent").value);
-    percent=Math.max(0,Math.min(100,percent));
-    db.goals.push({ text, percent });
-    saveDB();
-    openModal("goal");
-}
-
-function deleteGoal(i){
-    db.goals.splice(i,1);
-    saveDB();
-    openModal("goal");
-}
-
-/* =========================================================
-   5. SHOPPING MODULE
-========================================================= */
-
-function shoppingHTML(){
-    return `
-        <div class="form-group">
-            <label>구매할 물건</label>
-            <input id="shopInput" placeholder="예: 우유">
-        </div>
-
-        <button class="btn btn-blue" onclick="addShopping()">추가</button>
-
-        <div style="margin-top:15px">
-        ${
-            db.shopping.length
-            ? db.shopping.map((x,i)=>`
-                <div class="list-item">
-                    <input type="checkbox" style="width:22px" ${x.done?"checked":""} onchange="toggleShopping(${i})">
-                    <div class="list-main" style="${x.done?'text-decoration:line-through;color:#94a3b8':''}">
-                        ${esc(x.text)}
-                    </div>
-                    <button class="delete" onclick="deleteShopping(${i})">×</button>
-                </div>
-            `).join("")
-            : `<div class="empty">장보기 목록이 비어 있습니다.</div>`
-        }
-        </div>
-    `;
-}
-
-function addShopping(){
-    const text=document.getElementById("shopInput").value.trim();
-    if(!text)return;
-    db.shopping.push({ text, done:false });
-    saveDB();
-    openModal("shopping");
-}
-
-function toggleShopping(i){
-    db.shopping[i].done=!db.shopping[i].done;
-    saveDB();
-    openModal("shopping");
-}
-
-function deleteShopping(i){
-    db.shopping.splice(i,1);
-    saveDB();
-    openModal("shopping");
-}
-
-/* =========================================================
-   6. MEMO MODULE
-========================================================= */
-
-function memoHTML(){
-    return `
-        <div class="form-group">
-            <label>메모</label>
-            <textarea id="memoInput" placeholder="자유롭게 기록하세요"></textarea>
-        </div>
-
-        <button class="btn btn-blue" onclick="addMemo()">메모 저장</button>
-
-        <div style="margin-top:15px">
-        ${
-            db.memos.slice().reverse().map((x)=>`
-                <div class="analysis-item">
-                    <div class="row">
-                        <span class="list-sub">${x.date}</span>
-                        <button class="delete" onclick="deleteMemo('${x.id}')">×</button>
-                    </div>
-                    <div style="margin-top:7px">
-                        ${esc(x.text).replaceAll("\n","<br>")}
-                    </div>
-                </div>
-            `).join("")
-        }
-        </div>
-    `;
-}
-
-function addMemo(){
-    const text=document.getElementById("memoInput").value.trim();
-    if(!text)return;
-    db.memos.push({ id: Date.now().toString(), text, date:today() });
-    saveDB();
-    openModal("memo");
-}
-
-function deleteMemo(id){
-    db.memos = db.memos.filter(x => x.id !== id);
-    saveDB();
-    openModal("memo");
-}
-
-/* =========================================================
-   7. ITEM MODULE
-========================================================= */
-
-function itemHTML(){
-    return `
-        <div class="form-group">
-            <label>물건 이름</label>
-            <input id="itemName" placeholder="예: 충전기">
-        </div>
-
-        <div class="form-group">
-            <label>보관 위치</label>
-            <input id="itemLocation" placeholder="예: 안방 서랍">
-        </div>
-
-        <div class="form-group">
-            <label>메모</label>
-            <input id="itemMemo" placeholder="색상, 모델명 등">
-        </div>
-
-        <button class="btn btn-blue" onclick="addItem()">물건 저장</button>
-
-        <div style="margin-top:15px">
-        ${
-            db.items.length
-            ? db.items.map((x,i)=>`
-                <div class="analysis-item">
-                    <div class="row">
-                        <strong>📦 ${esc(x.name)}</strong>
-                        <button class="delete" onclick="deleteItem(${i})">×</button>
-                    </div>
-                    <div class="list-sub">📍 ${esc(x.location)}</div>
-                    <div class="list-sub">${esc(x.memo)}</div>
-                </div>
-            `).join("")
-            : `<div class="empty">등록된 물건이 없습니다.</div>`
-        }
-        </div>
-    `;
-}
-
-function addItem(){
-    const name=document.getElementById("itemName").value.trim();
-    if(!name)return;
-    db.items.push({ name, location:document.getElementById("itemLocation").value, memo:document.getElementById("itemMemo").value });
-    saveDB();
-    openModal("items");
-}
-
-function deleteItem(i){
-    db.items.splice(i,1);
-    saveDB();
-    openModal("items");
-}
-
-/* =========================================================
-   8. CALCULATOR MODULE
-========================================================= */
-
-function calculatorHTML() {
-    return `
-        <div class="calc-screen">
-            <div class="calc-formula" id="calcFormula"></div>
-            <div class="calc-value" id="calcDisplay">${calcDisplay}</div>
-        </div>
-
-        <div class="calc-grid">
-            <button class="calc-btn action" onclick="pressCalc('C')">C</button>
-            <button class="calc-btn op" onclick="pressCalc('(')">(</button>
-            <button class="calc-btn op" onclick="pressCalc(')')">)</button>
-            <button class="calc-btn op" onclick="pressCalc('/')">÷</button>
-
-            <button class="calc-btn" onclick="pressCalc('7')">7</button>
-            <button class="calc-btn" onclick="pressCalc('8')">8</button>
-            <button class="calc-btn" onclick="pressCalc('9')">9</button>
-            <button class="calc-btn op" onclick="pressCalc('*')">×</button>
-
-            <button class="calc-btn" onclick="pressCalc('4')">4</button>
-            <button class="calc-btn" onclick="pressCalc('5')">5</button>
-            <button class="calc-btn" onclick="pressCalc('6')">6</button>
-            <button class="calc-btn op" onclick="pressCalc('-')">-</button>
-
-            <button class="calc-btn" onclick="pressCalc('1')">1</button>
-            <button class="calc-btn" onclick="pressCalc('2')">2</button>
-            <button class="calc-btn" onclick="pressCalc('3')">3</button>
-            <button class="calc-btn op" onclick="pressCalc('+')">+</button>
-
-            <button class="calc-btn" onclick="pressCalc('0')">0</button>
-            <button class="calc-btn" onclick="pressCalc('00')">00</button>
-            <button class="calc-btn" onclick="pressCalc('.')">.</button>
-            <button class="calc-btn equal" onclick="calculate()">=</button>
-        </div>
-
-        <button class="btn btn-green" style="margin-top:15px;" onclick="sendCalcToExpense()">
-            💰 이 연산 결과를 가계부 금액으로 입력하기
-        </button>
-    `;
-}
-
-function pressCalc(val) {
-    const displayEl = document.getElementById("calcDisplay");
-
-    if (val === 'C') {
-        calcDisplay = "0";
-        calcLastValue = 0;
-        document.getElementById("calcFormula").textContent = "";
-    } else {
-        const ops = ['+', '-', '*', '/', '.'];
-        const lastChar = calcDisplay.slice(-1);
-
-        if (ops.includes(val) && ops.includes(lastChar)) {
-            calcDisplay = calcDisplay.slice(0, -1) + val;
-        } else if (calcDisplay === "0" && !isNaN(val)) {
-            calcDisplay = val;
-        } else {
-            calcDisplay += val;
-        }
-    }
-
-    displayEl.textContent = calcDisplay;
-}
-
-function calculate() {
-    const displayEl = document.getElementById("calcDisplay");
-    const formulaEl = document.getElementById("calcFormula");
-
-    try {
-        formulaEl.textContent = calcDisplay + " =";
-        const sanitizedFormula = calcDisplay.replace(/[^0-9+\-*/().]/g, '');
-        const result = Function('"use strict"; return (' + sanitizedFormula + ')')();
-
-        if (result === Infinity || isNaN(result)) {
-            displayEl.textContent = "오류";
-            calcDisplay = "0";
-            calcLastValue = 0;
-        } else {
-            const roundedResult = Math.round(result * 100000000) / 100000000;
-            displayEl.textContent = Number(roundedResult).toLocaleString("ko-KR");
-            calcDisplay = String(roundedResult);
-            calcLastValue = roundedResult;
-        }
-    } catch (e) {
-        displayEl.textContent = "오류";
-        calcDisplay = "0";
-        calcLastValue = 0;
-    }
-}
-
-function sendCalcToExpense(){
-    calculate();
-
-    if(calcLastValue <= 0) {
-        toast("0원 이상의 금액만 전달 가능합니다.");
-        return;
-    }
-
-    openModal("expense", calcLastValue);
-    toast(`${money(calcLastValue)}가 가계부에 입력되었습니다.`);
-}
-
-/* =========================================================
-   9. AI ENGINE & SCREEN
-========================================================= */
-
-function AIAnalyze(){
-    const currentMonth=month();
-    const total=calculateMonthlyExpense(currentMonth);
-    const categories={};
-
-    db.expenses.forEach(x=>{
-        const payType = x.payType || "cash";
-        const months = x.installMonths || 1;
-        
-        let effectiveAmount = 0;
-        if (payType === "installment") {
-            const [eYear, eMonth] = x.date.slice(0,7).split('-').map(Number);
-            const [tYear, tMonth] = currentMonth.split('-').map(Number);
-            const monthDiff = (tYear - eYear) * 12 + (tMonth - eMonth);
-            if (monthDiff >= 0 && monthDiff < months) {
-                effectiveAmount = Math.round(Number(x.amount) / months);
-            }
-        } else if (x.date.startsWith(currentMonth)) {
-            effectiveAmount = Number(x.amount);
-        }
-
-        if (effectiveAmount > 0) {
-            categories[x.category] = (categories[x.category] || 0) + effectiveAmount;
-        }
-    });
-
-    const todos=db.todos;
-    const todoTotal=todos.length;
-    const todoDone=todos.filter(x=>x.done).length;
-    const todoRate=todoTotal ? Math.round(todoDone/todoTotal*100) : 0;
-
-    const goals=db.goals;
-    const goalRate=goals.length ? Math.round(goals.reduce((s,x)=>s+Number(x.percent),0)/goals.length) : 0;
-
-    let score=70;
-    const findings=[];
-    const advice=[];
-
-    if(total===0){
-        findings.push("아직 이번 달 소비 데이터가 충분하지 않습니다.");
-    }else{
-        const entries=Object.entries(categories).sort((a,b)=>b[1]-a[1]);
-        const top=entries[0];
-
-        if(top){
-            const ratio=Math.round(top[1]/total*100);
-            findings.push(`이번 달 청구 지출 중 가장 큰 항목은 <strong>${esc(top[0])}</strong>이며 전체의 ${ratio}%를 차지합니다.`);
-            if(ratio>=40){
-                score-=8;
-                advice.push(`${top[0]} 지출 비중이 높습니다. 다음 달에는 해당 항목 예산을 조정해보세요.`);
-            }else{ score+=3; }
-        }
-
-        if(total>=3000000){
-            score-=10;
-            advice.push("현재 월 예상 지출 규모가 큰 편입니다. 고정비와 변동비를 나누어 점검해 보세요.");
-        }
-    }
-
-    if(todoTotal===0){
-        findings.push("등록된 할 일이 없어 생활 실행률을 계산하기 어렵습니다.");
-    }else{
-        findings.push(`할 일 완료율은 <strong>${todoRate}%</strong>입니다.`);
-        if(todoRate>=80){ score+=8; advice.push("할 일 관리가 매우 안정적입니다."); }
-        else if(todoRate<50){ score-=8; advice.push("완료하지 못한 일이 많습니다. 중요 일부터 먼저 처리해보세요."); }
-    }
-
-    if(goals.length){
-        findings.push(`현재 목표 평균 달성률은 <strong>${goalRate}%</strong>입니다.`);
-        if(goalRate>=80){ score+=8; }
-        else if(goalRate<40){ score-=7; advice.push("목표 달성률이 낮습니다. 더 작은 단계로 나누어 보세요."); }
-    }
-
-    if(db.memos.length>=5){ findings.push(`최근 ${db.memos.length}개의 메모가 저장되어 있습니다.`); }
-
-    if(db.expenses.length===0 && todoTotal===0 && goals.length===0){
-        score=50;
-        advice.push("가계부, 할 일, 목표를 기록하시면 AI 분석 정확도가 높아집니다.");
-    }
-
-    score=Math.max(0,Math.min(100,Math.round(score)));
-    let status = score>=85 ? "매우 좋음" : score>=70 ? "양호" : score>=55 ? "보통" : "관리 필요";
-
-    return { score, status, total, todoRate, goalRate, findings, advice };
-}
-
-function openAI(){
-    const result=AIAnalyze();
-    openModal('ai');
-
-    const title=document.getElementById("modalTitle");
-    const content=document.getElementById("modalContent");
-
-    title.textContent="🤖 AI 생활분석";
-    content.innerHTML=`
-        <div class="ai-box">
-            <div class="ai-big-score">
-                <div class="number">${result.score}</div>
-                <div class="text">생활지수 · ${result.status}</div>
-            </div>
-        </div>
-
-        <div class="stat-grid">
-            <div class="stat"><div class="name">이번 달 예상 청구액</div><div class="value">${money(result.total)}</div></div>
-            <div class="stat"><div class="name">할 일 완료율</div><div class="value">${result.todoRate}%</div></div>
-            <div class="stat"><div class="name">목표 달성률</div><div class="value">${result.goalRate}%</div></div>
-            <div class="stat"><div class="name">저장 데이터</div><div class="value">${db.expenses.length+db.todos.length+db.memos.length}</div></div>
-        </div>
-
-        <div class="section-title" style="padding:0;margin-top:20px">🔍 AI가 발견한 패턴</div>
-        <div class="ai-box">
-            ${result.findings.length ? result.findings.map(x=>`<div class="analysis-item">${x}</div>`).join("") : `<div class="empty">분석할 데이터가 없습니다.</div>`}
-        </div>
-
-        <div class="section-title" style="padding:0">💡 AI 생활 제안</div>
-        <div class="ai-box">
-            ${result.advice.length ? result.advice.map(x=>`<div class="analysis-item">💡 ${x}</div>`).join("") : `<div class="analysis-item">현재 생활 패턴이 매우 안정적입니다.</div>`}
-        </div>
-
-        <button class="btn btn-blue" onclick="openAI()">🔄 다시 분석</button>
-    `;
-}
-
-/* =========================================================
-   10. SETTINGS & BACKUP
-========================================================= */
-
-function settingsHTML(){
-    return `
-        <div class="ai-box">
-            <strong>📱 MY LIFE OS 데이터</strong>
-            <div class="list-sub" style="margin-top:8px">
-                모든 데이터는 현재 휴대폰 브라우저의 LocalStorage에 저장됩니다.
-            </div>
-        </div>
-
-        <button class="btn btn-blue" onclick="exportData()">📤 데이터 백업</button>
-        <button class="btn btn-gray" onclick="document.getElementById('importFile').click()">📥 데이터 복원</button>
-        <input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
-        <button class="btn btn-red" onclick="resetData()">🗑 전체 데이터 삭제</button>
-    `;
-}
-
-function exportData(){
-    const blob=new Blob([JSON.stringify(db,null,2)], {type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="MY_LIFE_OS_BACKUP_"+today()+".json";
-    a.click();
-    URL.revokeObjectURL(url);
-    toast("백업 파일을 만들었습니다");
-}
-
-function importData(event){
-    const file=event.target.files[0];
-    if(!file)return;
-    const reader=new FileReader();
-    reader.onload=function(){
-        try{
-            const data=JSON.parse(reader.result);
-            db={ ...defaultDB(), ...data };
-            saveDB();
-            toast("데이터가 복원되었습니다");
-            setTimeout(()=>{ openModal("settings"); },500);
-        }catch(e){ alert("잘못된 백업 파일입니다."); }
-    };
-    reader.readAsText(file);
-}
-
-function resetData(){
-    if(!confirm("모든 데이터가 삭제됩니다.\n정말 삭제할까요?"))return;
-    db=defaultDB();
-    saveDB();
-    closeModal();
-    toast("모든 데이터가 삭제되었습니다");
-}
-
-/* =========================================================
-   DASHBOARD UPDATE & START
-========================================================= */
-
-function updateDashboard(){
-    const currentMonth=month();
-    const total=calculateMonthlyExpense(currentMonth);
-
-    document.getElementById("expenseTotal").textContent=money(total);
-    document.getElementById("todoDone").textContent=db.todos.filter(x=>x.done).length;
-
-    const goalRate=db.goals.length ? Math.round(db.goals.reduce((s,x)=>s+Number(x.percent),0)/db.goals.length) : 0;
-    document.getElementById("goalProgress").textContent=goalRate+"%";
-    document.getElementById("memoCount").textContent=db.memos.length;
-
-    renderQuickMenu();
-    renderDashCards();
-    renderTodayTodo();
-}
-
-function renderTodayTodo(){
-    const box=document.getElementById("todayTodo");
-    const list=db.todos.filter(x=>x.date===today() && !x.done);
-
-    if(!list.length){
-        box.innerHTML=`<div class="empty">오늘 남은 할 일이 없습니다. 🎉</div>`;
-        return;
-    }
-
-    box.innerHTML=list.map(x=>`
-        <div class="list-item">
-            <div class="list-main">
-                <div class="list-title">${esc(x.text)}</div>
-                <div class="list-sub">오늘의 할 일</div>
-            </div>
-        </div>
-    `).join("");
-}
-
-function scrollTopPage(){ window.scrollTo({ top:0, behavior:"smooth" }); }
-
-// 앱 시작
-updateDashboard();
-window.addEventListener("beforeunload", saveDB);
-
+function defaultDB(){return{placedCardIds:["ai","expense"],expenses:[],todos:[],schedules:[],goals:[],shopping:[],memos:[],items:[]}}
+function loadDB(){try{const d=localStorage.getItem(DB_KEY);if(d){const p=JSON.parse(d);if(!p.placedCardIds)p.placedCardIds=["ai","expense"];p.placedCardIds=p.placedCardIds.filter(id=>id!=='fortune');return{...defaultDB(),...p}}}catch(e){}return defaultDB()}
+function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db));updateDashboard()}
+function money(n){return Number(n||0).toLocaleString("ko-KR")+"원"}
+function today(){return new Date().toISOString().slice(0,10)}
+function month(){return today().slice(0,7)}
+function esc(s){return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800)}
+function getTodayText(){const d=new Date();const days=["일","월","화","수","목","금","토"];return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`}
+function calculateMonthlyExpense(targetMonth){const[tY,tM]=targetMonth.split('-').map(Number);let total=0;db.expenses.forEach(x=>{if(!x.date)return;const pay=x.payType||"cash";const[eY,eM]=x.date.slice(0,7).split('-').map(Number);const diff=(tY-eY)*12+(tM-eM);if(pay==="installment"){const ms=Number(x.installMonths)||1;if(diff>=0&&diff<ms)total+=Math.round(Number(x.amount)/ms)}else if(diff===0)total+=Number(x.amount)});return total}
+function handleDragStart(e,id){draggedCardId=id;e.target.classList.add("dragging")}
+function handleDragEnd(e){e.target.classList.remove("dragging")}
+function handleDragOver(e){e.preventDefault();document.getElementById("dashBoard").classList.add("drag-over")}
+function handleDragLeave(e){document.getElementById("dashBoard").classList.remove("drag-over")}
+function handleDrop(e){e.preventDefault();document.getElementById("dashBoard").classList.remove("drag-over");if(!draggedCardId)return;if(!db.placedCardIds.includes(draggedCardId)){db.placedCardIds.push(draggedCardId);saveDB();toast("대시보드에 배치되었습니다")}draggedCardId=null}
+function togglePlaceMenu(id,e){if(e)e.stopPropagation();if(db.placedCardIds.includes(id))removeCard(id,e);else placeCard(id)}
+function placeCard(id){if(!db.placedCardIds.includes(id)){db.placedCardIds.push(id);saveDB();toast("상단 대시보드에 배치되었습니다")}}
+function removeCard(id,e){if(e)e.stopPropagation();db.placedCardIds=db.placedCardIds.filter(c=>c!==id);saveDB();toast("대시보드에서 제거되었습니다")}
+function renderQuickMenu(){const el=document.getElementById("quickMenu");el.innerHTML=MENU_LIST.map(item=>{const placed=db.placedCardIds.includes(item.id);return `<div class="menu-item-btn ${placed?'is-placed':''}" draggable="true" ondragstart="handleDragStart(event,'${item.id}')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('${item.id}')">${placed?`<span class="menu-pin-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>`:`<span class="menu-add-btn" onclick="togglePlaceMenu('${item.id}',event)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>`}<div class="icon-wrap" style="background:${COLORS[item.id]};color:#111827">${ICONS[item.id]}</div><div class="label">${item.label}</div></div>`}).join('')}
+function handleMenuClick(id){const it=MENU_LIST.find(m=>m.id===id);if(it&&it.action)it.action()}
+function renderDashCards(){const board=document.getElementById("dashBoard");if(db.placedCardIds.length===0){board.innerHTML=`<div class="dash-board-empty"><b>상단 대시보드가 비어있습니다.</b><br>아래 메뉴의 아이콘을 끌어올리거나 + 를 눌러 배치해보세요!</div>`;return}board.innerHTML=db.placedCardIds.map(id=>{if(id==='ai')return renderAICard();if(id==='expense')return renderExpenseCard();if(id==='todo')return renderTodoCard();return renderGenericCard(id)}).join('')}
+function renderAICard(){const ai=AIAnalyze();return `<div class="drag-card card-ai" draggable="true" ondragstart="handleDragStart(event,'ai')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('ai')"><button class="card-remove-btn" onclick="removeCard('ai',event)">제거</button><div class="greeting">${getTodayText()}</div><div class="today">오늘도 좋은 하루입니다.</div><div class="ai-mini"><div class="ai-title"><b>AI 생활지수</b><span class="ai-score">${ai.score}점</span></div><div class="ai-summary">${ai.status} 상태입니다. ${ai.advice[0]?ai.advice[0]:"기록을 쌓으면 분석이 정교해집니다."}</div></div></div>`}
+function renderExpenseCard(){const m=month();const me=calculateMonthlyExpense(m);return `<div class="drag-card card-expense-dash" draggable="true" ondragstart="handleDragStart(event,'expense')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('expense')"><button class="card-remove-btn" onclick="removeCard('expense',event)">제거</button><div class="row"><div style="font-size:14px;font-weight:800;letter-spacing:-.3px">이번 달 지출 현황</div><div style="font-size:20px;font-weight:900;letter-spacing:-.5px">${money(me)}</div></div><div style="margin-top:8px;font-size:12px;opacity:.9;font-weight:500">${m.split('-')[1]}월 예상 청구 금액입니다.</div></div>`}
+function renderTodoCard(){const list=db.todos.filter(x=>x.date===today()&&!x.done);return `<div class="drag-card card-todo-dash" draggable="true" ondragstart="handleDragStart(event,'todo')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('todo')"><button class="card-remove-btn" onclick="removeCard('todo',event)">제거</button><div class="row"><div style="font-size:14px;font-weight:800">남은 오늘의 할 일</div><div style="font-size:20px;font-weight:900;color:var(--blue)">${list.length}개</div></div><div style="margin-top:8px;font-size:12px;color:var(--sub);font-weight:500">${list.length>0?`• ${esc(list[0].text)} ${list.length>1?`외 ${list.length-1}개`:''}`:'오늘 해야 할 일을 모두 마쳤습니다! 🎉'}</div></div>`}
+function renderGenericCard(id){const item=MENU_LIST.find(m=>m.id===id);if(!item)return'';return `<div class="drag-card card-generic-dash" draggable="true" ondragstart="handleDragStart(event,'${id}')" ondragend="handleDragEnd(event)" onclick="handleMenuClick('${id}')"><button class="card-remove-btn" onclick="removeCard('${id}',event)">제거</button><div class="row"><div style="display:flex;align-items:center;gap:10px"><div class="icon-wrap" style="width:36px;height:36px;background:${COLORS[id]}">${ICONS[id]}</div><div style="font-size:14px;font-weight:800">${item.label}</div></div></div><div style="margin-top:10px;font-size:12px;color:var(--sub);font-weight:500">클릭하면 ${item.label} 상세 화면으로 이동합니다.</div></div>`}
+function openModal(type,prefillValue=null){const modal=document.getElementById("modal");const title=document.getElementById("modalTitle");const content=document.getElementById("modalContent");if(!modal.classList.contains("show")){history.pushState({modalOpen:true},"")}modal.classList.add("show");if(type==="expense"){title.textContent="가계부";content.innerHTML=expenseHTML(prefillValue)}else if(type==="todo"){title.textContent="할 일";content.innerHTML=todoHTML()}else if(type==="schedule"){title.textContent="일정";content.innerHTML=scheduleHTML()}else if(type==="goal"){title.textContent="목표";content.innerHTML=goalHTML()}else if(type==="shopping"){title.textContent="장보기";content.innerHTML=shoppingHTML()}else if(type==="memo"){title.textContent="메모";content.innerHTML=memoHTML()}else if(type==="items"){title.textContent="물건 관리";content.innerHTML=itemHTML()}else if(type==="calculator"){title.textContent="계산기";content.innerHTML=calculatorHTML()}else if(type==="settings"){title.textContent="설정 / 데이터";content.innerHTML=settingsHTML()}}
+function closeModal(fromPopstate=false){const modal=document.getElementById("modal");if(modal.classList.contains("show")){modal.classList.remove("show");if(!fromPopstate&&history.state&&history.state.modalOpen){history.back()}}}
+function handleModalBgClick(e){if(e.target.id==="modal")closeModal()}window.addEventListener("popstate",()=>{if(document.getElementById("modal").classList.contains("show"))closeModal(true)})
+function expenseHTML(prefillValue=null){const list=db.expenses.slice().reverse();return `<div class="form-group"><label>금액 (총 금액)</label><input id="expAmount" type="number" value="${prefillValue!==null?prefillValue:''}" placeholder="예: 15000"></div><div class="form-group"><label>결제 수단</label><select id="expPayType" onchange="toggleInstallmentField()"><option value="cash">현금</option><option value="card_single">카드 (일시불)</option><option value="installment">카드 (할부)</option></select></div><div class="form-group" id="installGroup" style="display:none"><label>할부 개월 수</label><input id="expInstallMonths" type="number" min="2" max="36" value="3"></div><div class="form-group"><label>분류</label><select id="expCategory"><option>식비</option><option>교통</option><option>쇼핑</option><option>통신</option><option>주거</option><option>의료</option><option>여가</option><option>기타</option></select></div><div class="form-group"><label>내용</label><input id="expMemo" placeholder="예: 점심식사"></div><button class="btn btn-blue" onclick="addExpense()">지출 기록</button><div class="section-title" style="padding:0;margin-top:24px">최근 지출</div>${list.length?list.slice(0,20).map(x=>{const idx=db.expenses.indexOf(x);const pay=x.payType||"cash";let badge="현금";if(pay==="card_single")badge="카드 일시불";if(pay==="installment")badge=`카드 ${x.installMonths}개월 할부`;return `<div class="list-item"><div class="list-main"><div class="list-title">${esc(x.memo||x.category)}</div><div class="list-sub">${x.date} · ${x.category} · ${badge}</div></div><div><b>${money(x.amount)}</b></div><button class="delete" onclick="deleteExpense(${idx})">×</button></div>`}).join(""):`<div class="empty">아직 지출 기록이 없습니다.</div>`}`}
+function toggleInstallmentField(){const v=document.getElementById("expPayType").value;document.getElementById("installGroup").style.display=v==="installment"?"block":"none"}
+function addExpense(){const amount=Number(document.getElementById("expAmount").value);const payType=document.getElementById("expPayType").value;let installMonths=1;if(!amount)return toast("금액을 입력하세요");if(payType==="installment"){installMonths=Number(document.getElementById("expInstallMonths").value);if(!installMonths||installMonths<2)return toast("할부 개월 수를 2개월 이상 입력하세요")}db.expenses.push({amount,payType,installMonths,category:document.getElementById("expCategory").value,memo:document.getElementById("expMemo").value,date:today()});saveDB();toast("지출이 기록되었습니다");openModal("expense")}
+function deleteExpense(i){if(confirm("삭제할까요?")){db.expenses.splice(i,1);saveDB();openModal("expense")}}
+function todoHTML(){return `<div class="form-group"><label>할 일</label><input id="todoInput" placeholder="예: 운동하기"></div><button class="btn btn-green" onclick="addTodo()">추가</button><div style="margin-top:15px">${db.todos.length?db.todos.slice().reverse().map(x=>`<div class="list-item"><input type="checkbox" style="width:22px" ${x.done?"checked":""} onchange="toggleTodo(${db.todos.indexOf(x)})"><div class="list-main" style="${x.done?'text-decoration:line-through;color:#8a8d91':''}">${esc(x.text)}</div><button class="delete" onclick="deleteTodo(${db.todos.indexOf(x)})">×</button></div>`).join(""):`<div class="empty">할 일이 없습니다.</div>`}</div>`}
+function addTodo(){const t=document.getElementById("todoInput").value.trim();if(!t)return;db.todos.push({text:t,done:false,date:today()});saveDB();openModal("todo")}
+function toggleTodo(i){db.todos[i].done=!db.todos[i].done;saveDB();openModal("todo")}
+function deleteTodo(i){db.todos.splice(i,1);saveDB();openModal("todo")}
+function scheduleHTML(){const list=db.schedules.slice().sort((a,b)=>a.date.localeCompare(b.date));return `<div class="form-group"><label>날짜</label><input id="schDate" type="date" value="${today()}"></div><div class="form-group"><label>일정</label><input id="schText" placeholder="예: 병원 예약"></div><button class="btn btn-blue" onclick="addSchedule()">일정 추가</button><div style="margin-top:15px">${list.length?list.map(x=>`<div class="list-item"><div class="list-main"><div class="list-title">${esc(x.text)}</div><div class="list-sub">${x.date}</div></div><button class="delete" onclick="deleteSchedule('${x.id}')">×</button></div>`).join(""):`<div class="empty">등록된 일정이 없습니다.</div>`}</div>`}
+function addSchedule(){const text=document.getElementById("schText").value.trim();if(!text)return;db.schedules.push({id:Date.now().toString(),date:document.getElementById("schDate").value,text});saveDB();openModal("schedule")}
+function deleteSchedule(id){db.schedules=db.schedules.filter(x=>x.id!==id);saveDB();openModal("schedule")}
+function goalHTML(){return `<div class="form-group"><label>목표</label><input id="goalText" placeholder="예: 100만원 모으기"></div><div class="form-group"><label>현재 진행률 (%)</label><input id="goalPercent" type="number" min="0" max="100" value="0"></div><button class="btn btn-blue" onclick="addGoal()">목표 추가</button><div style="margin-top:15px">${db.goals.length?db.goals.map((x,i)=>`<div class="analysis-item"><div class="row"><strong>${esc(x.text)}</strong><button class="delete" onclick="deleteGoal(${i})">×</button></div><div class="progress"><div style="width:${x.percent}%"></div></div><div class="list-sub">${x.percent}% 달성</div></div>`).join(""):`<div class="empty">등록된 목표가 없습니다.</div>`}</div>`}
+function addGoal(){const text=document.getElementById("goalText").value.trim();if(!text)return;let p=Math.max(0,Math.min(100,Number(document.getElementById("goalPercent").value)));db.goals.push({text,percent:p});saveDB();openModal("goal")}
+function deleteGoal(i){db.goals.splice(i,1);saveDB();openModal("goal")}
+function shoppingHTML(){return `<div class="form-group"><label>구매할 물건</label><input id="shopInput" placeholder="예: 우유"></div><button class="btn btn-blue" onclick="addShopping()">추가</button><div style="margin-top:15px">${db.shopping.length?db.shopping.map((x,i)=>`<div class="list-item"><input type="checkbox" style="width:22px" ${x.done?"checked":""} onchange="toggleShopping(${i})"><div class="list-main" style="${x.done?'text-decoration:line-through;color:#8a8d91':''}">${esc(x.text)}</div><button class="delete" onclick="deleteShopping(${i})">×</button></div>`).join(""):`<div class="empty">장보기 목록이 비어 있습니다.</div>`}</div>`}
+function addShopping(){const t=document.getElementById("shopInput").value.trim();if(!t)return;db.shopping.push({text:t,done:false});saveDB();openModal("shopping")}
+function toggleShopping(i){db.shopping[i].done=!db.shopping[i].done;saveDB();openModal("shopping")}
+function deleteShopping(i){db.shopping.splice(i,1);saveDB();openModal("shopping")}
+function memoHTML(){return `<div class="form-group"><label>메모</label><textarea id="memoInput" placeholder="자유롭게 기록하세요"></textarea></div><button class="btn btn-blue" onclick="addMemo()">메모 저장</button><div style="margin-top:15px">${db.memos.slice().reverse().map(x=>`<div class="analysis-item"><div class="row"><span class="list-sub">${x.date}</span><button class="delete" onclick="deleteMemo('${x.id}')">×</button></div><div style="margin-top:7px">${esc(x.text).replaceAll("\n","<br>")}</div></div>`).join("")}</div>`}
+function addMemo(){const t=document.getElementById("memoInput").value.trim();if(!t)return;db.memos.push({id:Date.now().toString(),text:t,date:today()});saveDB();openModal("memo")}
+function deleteMemo(id){db.memos=db.memos.filter(x=>x.id!==id);saveDB();openModal("memo")}
+function itemHTML(){return `<div class="form-group"><label>물건 이름</label><input id="itemName" placeholder="예: 충전기"></div><div class="form-group"><label>보관 위치</label><input id="itemLocation" placeholder="예: 안방 서랍"></div><div class="form-group"><label>메모</label><input id="itemMemo" placeholder="색상, 모델명 등"></div><button class="btn btn-blue" onclick="addItem()">물건 저장</button><div style="margin-top:15px">${db.items.length?db.items.map((x,i)=>`<div class="analysis-item"><div class="row"><strong>${esc(x.name)}</strong><button class="delete" onclick="deleteItem(${i})">×</button></div><div class="list-sub">📍 ${esc(x.location)}</div><div class="list-sub">${esc(x.memo)}</div></div>`).join(""):`<div class="empty">등록된 물건이 없습니다.</div>`}</div>`}
+function addItem(){const name=document.getElementById("itemName").value.trim();if(!name)return;db.items.push({name,location:document.getElementById("itemLocation").value,memo:document.getElementById("itemMemo").value});saveDB();openModal("items")}
+function deleteItem(i){db.items.splice(i,1);saveDB();openModal("items")}
+function calculatorHTML(){return `<div class="calc-screen"><div class="calc-formula" id="calcFormula"></div><div class="calc-value" id="calcDisplay">${calcDisplay}</div></div><div class="calc-grid"><button class="calc-btn action" onclick="pressCalc('C')">C</button><button class="calc-btn op" onclick="pressCalc('(')">(</button><button class="calc-btn op" onclick="pressCalc(')')">)</button><button class="calc-btn op" onclick="pressCalc('/')">÷</button><button class="calc-btn" onclick="pressCalc('7')">7</button><button class="calc-btn" onclick="pressCalc('8')">8</button><button class="calc-btn" onclick="pressCalc('9')">9</button><button class="calc-btn op" onclick="pressCalc('*')">×</button><button class="calc-btn" onclick="pressCalc('4')">4</button><button class="calc-btn" onclick="pressCalc('5')">5</button><button class="calc-btn" onclick="pressCalc('6')">6</button><button class="calc-btn op" onclick="pressCalc('-')">-</button><button class="calc-btn" onclick="pressCalc('1')">1</button><button class="calc-btn" onclick="pressCalc('2')">2</button><button class="calc-btn" onclick="pressCalc('3')">3</button><button class="calc-btn op" onclick="pressCalc('+')">+</button><button class="calc-btn" onclick="pressCalc('0')">0</button><button class="calc-btn" onclick="pressCalc('00')">00</button><button class="calc-btn" onclick="pressCalc('.')">.</button><button class="calc-btn equal" onclick="calculate()">=</button></div><button class="btn btn-green" style="margin-top:15px" onclick="sendCalcToExpense()">💰 이 결과를 가계부로 보내기</button>`}
+function pressCalc(val){const d=document.getElementById("calcDisplay");if(val==='C'){calcDisplay="0";calcLastValue=0;document.getElementById("calcFormula").textContent=""}else{const ops=['+','-','*','/','.'];const last=calcDisplay.slice(-1);if(ops.includes(val)&&ops.includes(last)){calcDisplay=calcDisplay.slice(0,-1)+val}else if(calcDisplay==="0"&&!isNaN(val)){calcDisplay=val}else{calcDisplay+=val}}d.textContent=calcDisplay}
+function calculate(){const d=document.getElementById("calcDisplay");const f=document.getElementById("calcFormula");try{f.textContent=calcDisplay+" =";const s=calcDisplay.replace(/[^0-9+\-*/().]/g,'');const r=Function('"use strict";return ('+s+')')();if(r===Infinity||isNaN(r)){d.textContent="오류";calcDisplay="0";calcLastValue=0}else{const rr=Math.round(r*1e8)/1e8;d.textContent=Number(rr).toLocaleString("ko-KR");calcDisplay=String(rr);calcLastValue=rr}}catch(e){d.textContent="오류";calcDisplay="0";calcLastValue=0}}
+function sendCalcToExpense(){calculate();if(calcLastValue<=0)return toast("0원 이상만 전달 가능합니다");openModal("expense",calcLastValue);toast(`${money(calcLastValue)}가 입력되었습니다`)}
+function AIAnalyze(){const cm=month();const total=calculateMonthlyExpense(cm);const cats={};db.expenses.forEach(x=>{let eff=0;const pay=x.payType||"cash";const ms=x.installMonths||1;const[eY,eM]=x.date.slice(0,7).split('-').map(Number);const[tY,tM]=cm.split('-').map(Number);const diff=(tY-eY)*12+(tM-eM);if(pay==="installment"){if(diff>=0&&diff<ms)eff=Math.round(Number(x.amount)/ms)}else if(diff===0)eff=Number(x.amount);if(eff>0)cats[x.category]=(cats[x.category]||0)+eff});const todos=db.todos;const tt=todos.length;const td=todos.filter(x=>x.done).length;const tr=tt?Math.round(td/tt*100):0;const goals=db.goals;const gr=goals.length?Math.round(goals.reduce((s,x)=>s+Number(x.percent),0)/goals.length):0;let score=70;const findings=[];const advice=[];if(total===0){findings.push("아직 이번 달 소비 데이터가 충분하지 않습니다.")}else{const ent=Object.entries(cats).sort((a,b)=>b[1]-a[1]);const top=ent[0];if(top){const ratio=Math.round(top[1]/total*100);findings.push(`이번 달 청구 지출 중 가장 큰 항목은 <strong>${esc(top[0])}</strong>이며 전체의 ${ratio}%를 차지합니다.`);if(ratio>=40){score-=8;advice.push(`${top[0]} 지출 비중이 높습니다. 예산을 조정해보세요.`)}else score+=3}if(total>=3000000){score-=10;advice.push("월 예상 지출 규모가 큰 편입니다. 고정비를 점검해보세요.")}}if(tt===0){findings.push("등록된 할 일이 없어 실행률을 계산하기 어렵습니다.")}else{findings.push(`할 일 완료율은 <strong>${tr}%</strong>입니다.`);if(tr>=80){score+=8;advice.push("할 일 관리가 매우 안정적입니다.")}else if(tr<50){score-=8;advice.push("완료하지 못한 일이 많습니다. 중요한 일부터 처리해보세요.")}}if(goals.length){findings.push(`목표 평균 달성률은 <strong>${gr}%</strong>입니다.`);if(gr>=80)score+=8;else if(gr<40){score-=7;advice.push("목표를 더 작은 단계로 나눠보세요.")}}if(db.memos.length>=5)findings.push(`최근 ${db.memos.length}개의 메모가 저장되어 있습니다.`);if(db.expenses.length===0&&tt===0&&goals.length===0){score=50;advice.push("가계부, 할 일, 목표를 기록하면 분석 정확도가 높아집니다.")}score=Math.max(0,Math.min(100,Math.round(score)));let status=score>=85?"매우 좋음":score>=70?"양호":score>=55?"보통":"관리 필요";return{score,status,total,todoRate:tr,goalRate:gr,findings,advice}}
+function openAI(){const r=AIAnalyze();openModal('ai');document.getElementById("modalTitle").textContent="AI 생활분석";document.getElementById("modalContent").innerHTML=`<div class="ai-box"><div class="ai-big-score"><div class="number">${r.score}</div><div class="text">생활지수 · ${r.status}</div></div></div><div class="stat-grid"><div class="stat"><div class="name">이번 달 예상 청구액</div><div class="value">${money(r.total)}</div></div><div class="stat"><div class="name">할 일 완료율</div><div class="value">${r.todoRate}%</div></div><div class="stat"><div class="name">목표 달성률</div><div class="value">${r.goalRate}%</div></div><div class="stat"><div class="name">저장 데이터</div><div class="value">${db.expenses.length+db.todos.length+db.memos.length}</div></div></div><div class="section-title" style="padding:0;margin-top:20px">🔍 AI가 발견한 패턴</div><div class="ai-box">${r.findings.length?r.findings.map(x=>`<div class="analysis-item">${x}</div>`).join(""):`<div class="empty">분석할 데이터가 없습니다.</div>`}</div><div class="section-title" style="padding:0">💡 AI 생활 제안</div><div class="ai-box">${r.advice.length?r.advice.map(x=>`<div class="analysis-item">💡 ${x}</div>`).join(""):`<div class="analysis-item">현재 생활 패턴이 매우 안정적입니다.</div>`}</div><button class="btn btn-blue" onclick="openAI()">🔄 다시 분석</button>`}
+function settingsHTML(){return `<div class="ai-box"><strong>MY LIFE OS 데이터</strong><div class="list-sub" style="margin-top:8px">모든 데이터는 브라우저 LocalStorage에 저장됩니다.</div></div><button class="btn btn-blue" onclick="exportData()">📤 데이터 백업</button><button class="btn btn-gray" onclick="document.getElementById('importFile').click()">📥 데이터 복원</button><input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)"><button class="btn btn-red" onclick="resetData()">🗑 전체 데이터 삭제</button>`}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="MY_LIFE_OS_BACKUP_"+today()+".json";a.click();URL.revokeObjectURL(url);toast("백업 파일을 만들었습니다")}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);db={...defaultDB(),...d};saveDB();toast("복원되었습니다");setTimeout(()=>openModal("settings"),500)}catch(err){alert("잘못된 백업 파일입니다.")}};r.readAsText(f)}
+function resetData(){if(!confirm("모든 데이터가 삭제됩니다.\n정말 삭제할까요?"))return;db=defaultDB();saveDB();closeModal();toast("삭제되었습니다")}
+function updateDashboard(){const cm=month();const total=calculateMonthlyExpense(cm);document.getElementById("expenseTotal").textContent=money(total);document.getElementById("todoDone").textContent=db.todos.filter(x=>x.done).length;const gr=db.goals.length?Math.round(db.goals.reduce((s,x)=>s+Number(x.percent),0)/db.goals.length):0;document.getElementById("goalProgress").textContent=gr+"%";document.getElementById("memoCount").textContent=db.memos.length;document.getElementById("datePill").textContent=getTodayText();renderQuickMenu();renderDashCards();renderTodayTodo()}
+function renderTodayTodo(){const box=document.getElementById("todayTodo");const list=db.todos.filter(x=>x.date===today()&&!x.done);if(!list.length){box.innerHTML=`<div class="empty">오늘 남은 할 일이 없습니다. 🎉</div>`;return}box.innerHTML=list.map(x=>`<div class="list-item"><div class="list-main"><div class="list-title">${esc(x.text)}</div><div class="list-sub">오늘의 할 일</div></div></div>`).join("")}
+function scrollTopPage(){window.scrollTo({top:0,behavior:"smooth"})}
+updateDashboard();window.addEventListener("beforeunload",saveDB);
 </script>
-
 </body>
 </html>
